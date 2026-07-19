@@ -1,103 +1,32 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>每日财经报告</title>
-  <style>
-    :root{--blue:#175cd3;--deep:#0b2f6b;--bg:#f6f8fb;--ink:#182230;--muted:#667085;--line:#d9e2ec;--green:#067647;--red:#b42318;--amber:#b54708}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.7}
-    main{max-width:900px;margin:0 auto;padding:18px 12px 44px} header{background:linear-gradient(135deg,var(--blue),var(--deep));color:#fff;border-radius:20px;padding:26px 18px;box-shadow:0 12px 30px rgba(16,24,40,.12)}
-    h1{margin:0 0 8px;font-size:28px} h2{font-size:20px;margin:0 0 12px} p{margin:8px 0} section{background:#fff;border:1px solid var(--line);border-radius:18px;padding:17px;margin:14px 0;box-shadow:0 6px 20px rgba(16,24,40,.05)}
-    .muted{color:var(--muted)}.badge{display:inline-block;background:rgba(255,255,255,.18);padding:5px 10px;border-radius:999px;margin-top:8px;font-size:13px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fbfdff}.card h3{margin:0 0 6px;font-size:16px}.status{font-size:22px;font-weight:800}.open{color:var(--green)}.closed{color:var(--red)}.pause{color:var(--amber)}
-    .countdown{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#eff6ff;border:1px solid #bfdbfe;border-radius:16px;padding:16px}.countdown strong{font-size:34px;color:var(--blue);letter-spacing:.5px}.small{font-size:13px;color:var(--muted)} button{border:0;background:var(--blue);color:#fff;border-radius:999px;padding:10px 16px;font-size:15px} ul{padding-left:20px;margin:8px 0} li{margin:6px 0}
-    @media(max-width:720px){.grid{grid-template-columns:1fr}h1{font-size:24px}.countdown strong{font-size:30px}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A股行情看板</title>
+<style>
+:root{--red:#d92d20;--green:#079455;--blue:#175cd3;--bg:#f5f7fb;--card:#fff;--ink:#182230;--muted:#667085;--line:#d9e2ec;--amber:#b54708}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.55}main{max-width:980px;margin:auto;padding:14px 10px 36px}header{background:linear-gradient(135deg,#175cd3,#0b2f6b);color:#fff;border-radius:18px;padding:20px 16px;box-shadow:0 12px 30px rgba(16,24,40,.12)}h1{font-size:25px;margin:0 0 8px}h2{font-size:19px;margin:0 0 12px}section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0;box-shadow:0 6px 20px rgba(16,24,40,.05)}.top{display:grid;grid-template-columns:1.1fr 1.9fr;gap:12px}.count{background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:13px}.count strong{display:block;font-size:32px;color:var(--blue)}.small{font-size:13px;color:var(--muted)}button{border:0;border-radius:999px;background:var(--blue);color:#fff;padding:9px 14px;font-size:14px}.marketGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.statusCard{border:1px solid var(--line);border-radius:14px;padding:11px;background:#fbfdff}.status{font-size:20px;font-weight:800}.open{color:var(--red)}.closed{color:var(--green)}.pause{color:var(--amber)}.idxGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.idx{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fbfdff}.idxName{font-weight:700}.idxPrice{font-size:24px;font-weight:800;margin:4px 0}.red{color:var(--red)!important}.green{color:var(--green)!important}.muted{color:var(--muted)}.boards{display:grid;grid-template-columns:1fr 1fr;gap:12px}.rank{width:100%;border-collapse:collapse}.rank th,.rank td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}.rank th{color:var(--muted);font-weight:600}.rank td:last-child,.rank th:last-child{text-align:right}.tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:#f2f4f7;color:#475467}.err{color:var(--amber)}@media(max-width:760px){.top,.boards,.idxGrid{grid-template-columns:1fr}.marketGrid{grid-template-columns:repeat(3,1fr)}h1{font-size:22px}.count strong{font-size:29px}.rank th,.rank td{font-size:13px;padding:8px 4px}}
+</style>
 </head>
 <body>
-  <main>
-    <header>
-      <h1>每日财经报告</h1>
-      <p>手机 5G 固定访问页：每 5 分钟自动刷新界面。</p>
-      <p style="color:rgba(255,255,255,.82)">注意：后台报告任务最低 10 分钟更新一次，所以页面刷新更快，数据可能仍按 10 分钟节奏变化。</p>
-      <span class="badge">公开信息整理 · 非投资建议</span>
-    </header>
-
-    <section>
-      <h2>刷新倒计时</h2>
-      <div class="countdown">
-        <div>
-          <div class="small">距离下次页面刷新还有</div>
-          <strong id="countdown">5:00（300 秒）</strong>
-          <div class="small" id="nextTime">正在计算下次刷新时间...</div>
-        </div>
-        <button onclick="location.reload()">立即刷新</button>
-      </div>
-    </section>
-
-    <section>
-      <h2>开市 / 休市状态</h2>
-      <div class="grid">
-        <div class="card"><h3>A股</h3><div id="cnStatus" class="status">计算中</div><p id="cnHint" class="small"></p></div>
-        <div class="card"><h3>港股</h3><div id="hkStatus" class="status">计算中</div><p id="hkHint" class="small"></p></div>
-        <div class="card"><h3>美股</h3><div id="usStatus" class="status">计算中</div><p id="usHint" class="small"></p></div>
-      </div>
-      <p class="small">状态按常规交易时间估算，不含节假日、临时停市、半日市和盘前盘后。</p>
-    </section>
-
-    <section>
-      <h2>当前信息</h2>
-      <ul>
-        <li id="nowLine">正在读取当前时间...</li>
-        <li>此页面已经可以在手机 5G 下访问。</li>
-        <li>如果你看到报告内容没有变化，通常是后台财经报告还没到下一次 10 分钟更新。</li>
-        <li>后续可以继续做“自动把最新财经报告同步到 GitHub”，这样手机页面就会显示完整财经内容。</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>说明</h2>
-      <p>当前页面先提供倒计时、开休市状态和访问入口，方便你确认刷新节奏。完整财经报告仍在本地定时生成，尚未自动推送到 GitHub。</p>
-      <p class="muted">本页面不构成任何证券、基金、期货、外汇或其他金融产品的投资建议。</p>
-    </section>
-  </main>
-
-  <script>
-    const REFRESH_SECONDS = 300;
-    const startedAt = Date.now();
-    const nextAt = startedAt + REFRESH_SECONDS * 1000;
-    const $ = id => document.getElementById(id);
-    const pad = n => String(n).padStart(2,'0');
-    function parts(date, timeZone){
-      const f = new Intl.DateTimeFormat('en-US',{timeZone,weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-      const obj = {}; f.formatToParts(date).forEach(p=>obj[p.type]=p.value); return obj;
-    }
-    function minutes(p){return Number(p.hour)*60 + Number(p.minute)}
-    function weekdayOpen(p){return !['Sat','Sun'].includes(p.weekday)}
-    function setStatus(prefix, state, hint){
-      const el=$(prefix+'Status'); el.textContent=state; el.className='status '+(state==='开市'?'open':state==='午间休市'?'pause':'closed'); $(prefix+'Hint').textContent=hint;
-    }
-    function marketStatus(){
-      const now = new Date();
-      const cn = parts(now,'Asia/Shanghai'), cmin=minutes(cn), cday=weekdayOpen(cn);
-      if(!cday) setStatus('cn','休市','周末休市'); else if(cmin>=570&&cmin<690) setStatus('cn','开市','上午 09:30-11:30'); else if(cmin>=690&&cmin<780) setStatus('cn','午间休市','下午 13:00 继续'); else if(cmin>=780&&cmin<900) setStatus('cn','开市','下午 13:00-15:00'); else setStatus('cn','休市','常规交易 09:30-11:30、13:00-15:00');
-      const hk = parts(now,'Asia/Hong_Kong'), hmin=minutes(hk), hday=weekdayOpen(hk);
-      if(!hday) setStatus('hk','休市','周末休市'); else if(hmin>=570&&hmin<720) setStatus('hk','开市','上午 09:30-12:00'); else if(hmin>=720&&hmin<780) setStatus('hk','午间休市','下午 13:00 继续'); else if(hmin>=780&&hmin<960) setStatus('hk','开市','下午 13:00-16:00'); else setStatus('hk','休市','常规交易 09:30-12:00、13:00-16:00');
-      const us = parts(now,'America/New_York'), umin=minutes(us), uday=weekdayOpen(us);
-      if(!uday) setStatus('us','休市','美东周末休市'); else if(umin>=570&&umin<960) setStatus('us','开市','美东 09:30-16:00'); else setStatus('us','休市','常规交易为美东 09:30-16:00');
-    }
-    function update(){
-      const left = Math.max(0, Math.ceil((nextAt - Date.now()) / 1000));
-      const min = Math.floor(left / 60), sec = left % 60;
-      $('countdown').textContent = `${min}:${pad(sec)}（${left} 秒）`;
-      const d = new Date(nextAt);
-      $('nextTime').textContent = `预计页面刷新时间：${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-      $('nowLine').textContent = `当前手机本地时间：${new Date().toLocaleString('zh-CN')}`;
-      document.title = `剩余 ${left} 秒 · 每日财经报告`;
-      marketStatus();
-      if(left <= 0) location.reload();
-    }
-    update(); setInterval(update,1000);
-  </script>
+<main>
+<header><h1>A股行情看板</h1><p>5分钟自动刷新页面，重新获取行情、领涨板块和领跌板块。</p><p class="small" style="color:rgba(255,255,255,.82)">数据来自公开行情接口，可能延迟；红色为上涨/领涨，绿色为下跌/领跌。</p></header>
+<section class="top"><div class="count"><div class="small">距离下次刷新</div><strong id="countdown">5:00</strong><div class="small" id="nextTime">计算中...</div><p><button onclick="location.reload()">立即刷新</button></p></div><div><h2>开市 / 休市</h2><div class="marketGrid"><div class="statusCard"><b>A股</b><div id="cnStatus" class="status">--</div><div id="cnHint" class="small"></div></div><div class="statusCard"><b>港股</b><div id="hkStatus" class="status">--</div><div id="hkHint" class="small"></div></div><div class="statusCard"><b>美股</b><div id="usStatus" class="status">--</div><div id="usHint" class="small"></div></div></div></div></section>
+<section><h2>A股行情信息</h2><div id="quoteTime" class="small">正在获取行情...</div><div id="indices" class="idxGrid"></div></section>
+<section><div class="boards"><div><h2>领涨板块排行</h2><table class="rank"><thead><tr><th>排名</th><th>板块</th><th>涨幅</th></tr></thead><tbody id="upBoards"><tr><td colspan="3">加载中...</td></tr></tbody></table></div><div><h2>领跌板块排行</h2><table class="rank"><thead><tr><th>排名</th><th>板块</th><th>跌幅</th></tr></thead><tbody id="downBoards"><tr><td colspan="3">加载中...</td></tr></tbody></table></div></div></section>
+</main>
+<script>
+const REFRESH_SECONDS=300, startedAt=Date.now(), nextAt=startedAt+REFRESH_SECONDS*1000; const $=id=>document.getElementById(id), pad=n=>String(n).padStart(2,'0');
+function jsonp(url){return new Promise((resolve,reject)=>{const cb='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);window[cb]=d=>{delete window[cb];s.remove();resolve(d)};const s=document.createElement('script');s.onerror=()=>{delete window[cb];s.remove();reject(new Error('行情接口加载失败'))};s.src=url+(url.includes('?')?'&':'?')+'cb='+cb;document.body.appendChild(s);setTimeout(()=>{if(window[cb]){delete window[cb];s.remove();reject(new Error('行情接口超时'))}},9000)})}
+function cls(v){return Number(v)>=0?'red':'green'} function fmt(v,d=2){return v===undefined||v===null||v==='-'?'--':Number(v).toFixed(d)}
+function parts(date,tz){const f=new Intl.DateTimeFormat('en-US',{timeZone:tz,weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});const o={};f.formatToParts(date).forEach(p=>o[p.type]=p.value);return o} function mins(p){return Number(p.hour)*60+Number(p.minute)} function weekday(p){return !['Sat','Sun'].includes(p.weekday)}
+function setStatus(k,state,hint){const el=$(k+'Status');el.textContent=state;el.className='status '+(state==='开市'?'open':state==='午间休市'?'pause':'closed');$(k+'Hint').textContent=hint}
+function marketStatus(){const now=new Date();let p=parts(now,'Asia/Shanghai'),m=mins(p),d=weekday(p); if(!d)setStatus('cn','休市','周末'); else if(m>=570&&m<690)setStatus('cn','开市','09:30-11:30'); else if(m>=690&&m<780)setStatus('cn','午间休市','13:00继续'); else if(m>=780&&m<900)setStatus('cn','开市','13:00-15:00'); else setStatus('cn','休市','常规 09:30-15:00'); p=parts(now,'Asia/Hong_Kong');m=mins(p);d=weekday(p); if(!d)setStatus('hk','休市','周末'); else if(m>=570&&m<720)setStatus('hk','开市','09:30-12:00'); else if(m>=720&&m<780)setStatus('hk','午间休市','13:00继续'); else if(m>=780&&m<960)setStatus('hk','开市','13:00-16:00'); else setStatus('hk','休市','常规 09:30-16:00'); p=parts(now,'America/New_York');m=mins(p);d=weekday(p); if(!d)setStatus('us','休市','美东周末'); else if(m>=570&&m<960)setStatus('us','开市','美东09:30-16:00'); else setStatus('us','休市','美东常规09:30-16:00')}
+async function loadIndices(){try{const url='https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&invt=2&fields=f12,f14,f2,f3,f4,f6&secids=1.000001,0.399001,0.399006,1.000300,1.000905,0.399005';const d=await jsonp(url);const arr=d?.data?.diff||[];$('quoteTime').textContent='更新时间：'+new Date().toLocaleString('zh-CN');$('indices').innerHTML=arr.map(x=>`<div class="idx"><div class="idxName">${x.f14}<span class="tag">${x.f12}</span></div><div class="idxPrice ${cls(x.f3)}">${fmt(x.f2)}</div><div class="${cls(x.f3)}">${fmt(x.f3)}%　${fmt(x.f4)}</div></div>`).join('')||'<p class="err">暂无行情数据</p>'}catch(e){$('quoteTime').innerHTML='<span class="err">行情获取失败，5分钟后会自动重试。</span>'}}
+async function loadBoards(){const fields='f12,f14,f3,f2';const base='https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=10&np=1&fltt=2&invt=2&ut=bd1d9ddb04089700cf9c27f6f7426281&fs=m:90+t:2&fields='+fields;try{let up=await jsonp(base+'&fid=f3&po=1');let down=await jsonp(base+'&fid=f3&po=0');renderBoards('upBoards',up?.data?.diff||[],true);renderBoards('downBoards',down?.data?.diff||[],false)}catch(e){$('upBoards').innerHTML='<tr><td colspan="3" class="err">板块数据获取失败</td></tr>';$('downBoards').innerHTML='<tr><td colspan="3" class="err">板块数据获取失败</td></tr>'}}
+function renderBoards(id,arr,isUp){$(id).innerHTML=arr.map((x,i)=>`<tr><td>${i+1}</td><td>${x.f14}<br><span class="small">${x.f12}</span></td><td class="${isUp?'red':'green'}">${fmt(x.f3)}%</td></tr>`).join('')||'<tr><td colspan="3">暂无数据</td></tr>'}
+function updateClock(){const left=Math.max(0,Math.ceil((nextAt-Date.now())/1000));$('countdown').textContent=`${Math.floor(left/60)}:${pad(left%60)}（${left}秒）`;const d=new Date(nextAt);$('nextTime').textContent=`预计刷新：${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;document.title=`${left}秒后刷新 · A股行情看板`;marketStatus();if(left<=0)location.reload()}
+updateClock();setInterval(updateClock,1000);loadIndices();loadBoards();
+</script>
 </body>
 </html>
