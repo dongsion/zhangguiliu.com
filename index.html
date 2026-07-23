@@ -49,7 +49,8 @@
 
   .capsuleTabs button.active,.signalSubTabs button.active{animation:tabPop .28s ease,glowPulse 2.8s ease-in-out infinite}
 
-  .signalSubPanel.active{animation:softRise .26s ease both}
+  .signalSubPanel.active{animation:softRise .26s ease both;display:flex}
+  .signalSubPanel:not(.active){display:none}
 
   .payModal.show .payModalBox{animation:softRise .24s ease both}
 
