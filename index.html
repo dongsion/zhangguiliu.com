@@ -555,7 +555,7 @@ body.dark .loadingShimmer::after{background:linear-gradient(90deg,transparent,rg
       <div class="settingsGroup">
         <div class="settingsGroupTitle">关于</div>
         <div class="settingsAbout">
-          <div class="settingsAboutItem"><span>版本</span><strong>v1.4.85</strong></div>
+          <div class="settingsAboutItem"><span>版本</span><strong>v1.4.86</strong></div>
           <div class="settingsAboutItem"><span>客服微信</span><strong>19240252146</strong></div>
           <div class="settingsAboutItem"><span>数据来源</span><strong>东方财富 / 新浪财经</strong></div>
           <div class="settingsAboutNote">行情数据来自公开接口，仅供参考，不构成投资建议。</div>
@@ -711,6 +711,7 @@ var WR_SECTORS=[
 {name:'云计算',etfs:['516510'],market:['000001','000300']}
 ];
 var WR_SECID_MAP={'399006':'0.399006','000688':'1.000688','512480':'1.512480','159819':'0.159819','000001':'1.000001','000300':'1.000300','518880':'1.518880','512010':'1.512010','512660':'1.512660','515790':'1.515790','512400':'1.512400','510300':'1.510300','512880':'1.512880','512800':'1.512800','515030':'1.515030','515220':'1.515220','561560':'1.561560','561360':'1.561360','516510':'1.516510'};
+function getBoardInfoForSector(name){var reg;if(name==='半导体')reg=/半导体|芯片|集成电路/i;else if(name==='人工智能')reg=/人工智能|算力|云计算|软件|AI|AIDC|CPO|通信/i;else if(name==='医药')reg=/医药|医疗|创新药|生物|中药|器械/i;else if(name==='黄金')reg=/黄金|贵金属/i;else if(name==='军工')reg=/军工|航天|卫星|国防|航空/i;else if(name==='光伏新能源')reg=/光伏|新能源|储能|电池|电力设备/i;else if(name==='有色金属')reg=/有色|稀土|稀有金属|锂|铜|铝|锌|钴/i;else if(name==='沪深300')reg=/沪深300|宽基|A500|大盘/i;else if(name==='证券')reg=/证券|券商|期货|信托/i;else if(name==='银行')reg=/银行|农商行/i;else if(name==='新能源车')reg=/新能源车|汽车|锂电池|充电桩|汽配/i;else if(name==='煤炭')reg=/煤炭|煤矿|焦煤|焦炭|动力煤/i;else if(name==='电力')reg=/电力|电网|电源|火电|水电|核电/i;else if(name==='石油')reg=/石油|油气|天然气|页岩气/i;else if(name==='云计算')reg=/云计算|大数据|数据中心|IDC|软件/i;if(!reg)return undefined;var b=boardMatchScore(reg);return{up:b.up,down:b.down,total:b.total}}
 function chooseSectorSignal(pctVal,marketAvg,mode,boardInfo){
 if(!Number.isFinite(pctVal))return{signal:'不考虑',type:'sell'};
 var relative=Number.isFinite(marketAvg)?pctVal-marketAvg:NaN;
@@ -753,7 +754,7 @@ var etfVals=sec.etfs.map(function(c){return td[c]}).filter(Number.isFinite);
 if(!etfVals.length)continue;var etfAvg=etfVals.reduce(function(a,b){return a+b},0)/etfVals.length;
 var mktVals=sec.market.map(function(c){return td[c]}).filter(Number.isFinite);
 var marketAvg=mktVals.length?mktVals.reduce(function(a,b){return a+b},0)/mktVals.length:NaN;
-var sig=chooseSectorSignal(etfAvg,marketAvg,mode);
+var bi=!tomorrow?getBoardInfoForSector(sec.name):undefined;var sig=chooseSectorSignal(etfAvg,marketAvg,mode,bi);
 if(!tomorrow){details.push({date:today,signal:sig.signal,type:sig.type,correct:null});continue}
 var tmr=dailyData[tomorrow];var tmrEtfVals=sec.etfs.map(function(c){return tmr[c]}).filter(Number.isFinite);
 if(!tmrEtfVals.length)continue;var tmrAvg=tmrEtfVals.reduce(function(a,b){return a+b},0)/tmrEtfVals.length;
