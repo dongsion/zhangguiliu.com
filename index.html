@@ -555,7 +555,7 @@ body.dark .loadingShimmer::after{background:linear-gradient(90deg,transparent,rg
       <div class="settingsGroup">
         <div class="settingsGroupTitle">关于</div>
         <div class="settingsAbout">
-          <div class="settingsAboutItem"><span>版本</span><strong>v1.4.87</strong></div>
+          <div class="settingsAboutItem"><span>版本</span><strong>v1.4.88</strong></div>
           <div class="settingsAboutItem"><span>客服微信</span><strong>19240252146</strong></div>
           <div class="settingsAboutItem"><span>数据来源</span><strong>东方财富 / 新浪财经</strong></div>
           <div class="settingsAboutNote">行情数据来自公开接口，仅供参考，不构成投资建议。</div>
@@ -757,7 +757,8 @@ var marketAvg=mktVals.length?mktVals.reduce(function(a,b){return a+b},0)/mktVals
 var bi=!tomorrow?getBoardInfoForSector(sec.name):undefined;
 if(!tomorrow){
 var livePctVal=NaN;
-if(sec.name==='半导体')livePctVal=pct('512480');
+if(sec.name==='科技综合')livePctVal=avg([pct('399006'),pct('000688'),pct('512480'),pct('159819')]);
+else if(sec.name==='半导体')livePctVal=pct('512480');
 else if(sec.name==='人工智能')livePctVal=pct('159819');
 else if(sec.name==='创业板')livePctVal=pct('399006');
 else if(sec.name==='科创50')livePctVal=pct('000688');
