@@ -14,6 +14,7 @@ h1{font-size:22px;color:#8b6914;margin-bottom:6px;text-align:center}
 .form-group label{display:block;font-size:14px;font-weight:600;color:#555;margin-bottom:8px}
 .form-group select,.form-group input{width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:15px;outline:none;transition:border-color .2s}
 .form-group select:focus,.form-group input:focus{border-color:#f0b429}
+.form-group .hint{font-size:12px;color:#999;margin-top:4px}
 .row{display:flex;gap:12px}
 .row .form-group{flex:1}
 .btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .2s}
@@ -43,12 +44,22 @@ h1{font-size:22px;color:#8b6914;margin-bottom:6px;text-align:center}
 .json-output label{display:block;font-size:14px;font-weight:600;color:#555;margin-bottom:8px}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:24px;font-size:14px;z-index:1000;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
+.device-code-box{background:linear-gradient(135deg,#fffbef,#fff7e0);border:1.5px solid #f0b429;border-radius:12px;padding:14px;margin-bottom:18px}
+.device-code-box label{color:#8b6914;font-weight:700}
+.device-code-box input{border-color:#f0b429;background:#fff}
+.device-code-box .hint{color:#b67800}
 </style>
 </head>
 <body>
 <div class="container">
 <h1>VIP序列号生成工具</h1>
-<p class="subtitle">财猫看板 · 序列号批量生成</p>
+<p class="subtitle">财猫看板 · 设备绑定序列号生成</p>
+
+<div class="device-code-box">
+<label>用户设备码（必填）</label>
+<input type="text" id="deviceCode" placeholder="如 A1B2-C3D4-EFGH" autocomplete="off">
+<div class="hint">用户在开通VIP流程中获取的设备码，生成的序列号仅限该设备使用</div>
+</div>
 
 <div class="form-group">
 <label>套餐类型</label>
@@ -67,7 +78,7 @@ h1{font-size:22px;color:#8b6914;margin-bottom:6px;text-align:center}
 <div class="row">
 <div class="form-group">
 <label>生成数量</label>
-<input type="number" id="count" value="10" min="1" max="500">
+<input type="number" id="count" value="1" min="1" max="100">
 </div>
 <div class="form-group">
 <label>批次标识（可选）</label>
@@ -90,10 +101,12 @@ h1{font-size:22px;color:#8b6914;margin-bottom:6px;text-align:center}
 </div>
 <div class="info-box">
 <strong>使用说明：</strong><br>
-1. 选择套餐类型和数量，点击生成<br>
-2. 复制 JSON 格式代码<br>
-3. 粘贴到 index.html 的 <code>SERIAL_TABLE</code> 数组末尾（在 <code>]</code> 之前加逗号）<br>
-4. 重新生成部署脚本并发布
+1. 用户发来设备码，粘贴到上方输入框<br>
+2. 选择套餐类型，点击生成<br>
+3. 复制 JSON 格式代码<br>
+4. 粘贴到 index.html 的 <code>SERIAL_TABLE</code> 数组末尾（在 <code>]</code> 之前加逗号）<br>
+5. 更新版本号并部署上线<br>
+6. 将序列号发给用户，用户输入后自动绑定设备
 </div>
 </div>
 </div>
@@ -119,8 +132,14 @@ if(tier==='P')return 'VIP-P';
 return 'VIP-D';
 }
 function generate(){
+var dc=document.getElementById('deviceCode').value.trim().toUpperCase();
+if(!dc){
+showToast('请输入用户设备码');
+document.getElementById('deviceCode').focus();
+return;
+}
 var tier=document.getElementById('tierType').value;
-var count=parseInt(document.getElementById('count').value)||10;
+var count=parseInt(document.getElementById('count').value)||1;
 var batch=document.getElementById('batchTag').value.trim().toUpperCase();
 var days=getDays(tier);
 var prefix=getPrefix(tier);
@@ -136,7 +155,7 @@ code=generateRandomCode(prefix,dateStr,batch);
 attempts++;
 }while(seen[code]&&attempts<100);
 seen[code]=true;
-generated.push({code:code,status:'未使用',days:days,activatedAt:'',expiresAt:''});
+generated.push({code:code,status:'未使用',days:days,deviceCode:dc,activatedAt:'',expiresAt:''});
 }
 renderResult(generated);
 }
@@ -145,7 +164,7 @@ var el=document.getElementById('result');
 var listEl=document.getElementById('serialList');
 var titleEl=document.getElementById('resultTitle');
 el.classList.add('show');
-titleEl.textContent='已生成 '+list.length+' 个序列号';
+titleEl.textContent='已生成 '+list.length+' 个序列号（绑定设备：'+list[0].deviceCode+'）';
 var html='';
 list.forEach(function(item){
 html+='<div class="serial-item"><span class="code">'+item.code+'</span><button class="copy-btn" onclick="copyOne(this,\''+item.code+'\')">复制</button></div>';
