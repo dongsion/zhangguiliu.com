@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VIP序列号生成工具</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#f5f5f0;color:#333;min-height:100vh;padding:20px}
+.container{max-width:600px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 2px 20px rgba(0,0,0,.08);padding:28px}
+h1{font-size:22px;color:#8b6914;margin-bottom:6px;text-align:center}
+.subtitle{font-size:13px;color:#999;text-align:center;margin-bottom:24px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:14px;font-weight:600;color:#555;margin-bottom:8px}
+.form-group select,.form-group input{width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:15px;outline:none;transition:border-color .2s}
+.form-group select:focus,.form-group input:focus{border-color:#f0b429}
+.row{display:flex;gap:12px}
+.row .form-group{flex:1}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .2s}
+.btn-primary{background:linear-gradient(135deg,#f0b429,#e69500);color:#fff;box-shadow:0 4px 14px rgba(240,180,41,.4)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(240,180,41,.5)}
+.btn-primary:active{transform:translateY(0)}
+.btn-secondary{background:#f5f5f0;color:#8b6914;border:1.5px solid #f0b429;margin-top:10px}
+.btn-secondary:hover{background:#fdf8ec}
+.result{margin-top:20px;display:none}
+.result.show{display:block}
+.result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.result-header h3{font-size:15px;color:#555}
+.copy-all-btn{font-size:12px;padding:6px 14px;border:1px solid #f0b429;border-radius:8px;background:#fff;color:#e69500;cursor:pointer;font-weight:600}
+.copy-all-btn:hover{background:#fdf8ec}
+.serial-list{background:#fafaf5;border:1px solid #eee;border-radius:10px;padding:14px;max-height:300px;overflow-y:auto}
+.serial-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid #f0f0f0;font-family:'Courier New',monospace;font-size:14px}
+.serial-item:last-child{border-bottom:none}
+.serial-item .code{color:#333;font-weight:600}
+.serial-item .copy-btn{font-size:11px;padding:3px 10px;border:none;border-radius:6px;background:#f0b429;color:#fff;cursor:pointer;white-space:nowrap}
+.serial-item .copy-btn:hover{background:#e69500}
+.serial-item .copy-btn.copied{background:#4caf50}
+.info-box{margin-top:16px;padding:14px;background:#fffbe6;border:1px solid #ffe58f;border-radius:10px;font-size:13px;color:#8b6914;line-height:1.6}
+.info-box strong{color:#8b6914}
+.json-output{margin-top:16px;display:none}
+.json-output.show{display:block}
+.json-output textarea{width:100%;height:200px;padding:12px;border:1.5px solid #ddd;border-radius:10px;font-family:'Courier New',monospace;font-size:12px;background:#fafaf5;resize:vertical;outline:none}
+.json-output label{display:block;font-size:14px;font-weight:600;color:#555;margin-bottom:8px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:24px;font-size:14px;z-index:1000;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>VIP序列号生成工具</h1>
+<p class="subtitle">财猫看板 · 序列号批量生成</p>
+
+<div class="form-group">
+<label>套餐类型</label>
+<select id="tierType">
+<option value="M">月卡（30天）</option>
+<option value="P">永久（36500天）</option>
+<option value="D">自定义天数</option>
+</select>
+</div>
+
+<div class="form-group" id="customDaysGroup" style="display:none">
+<label>自定义天数</label>
+<input type="number" id="customDays" placeholder="例如：7、90、365" min="1" value="30">
+</div>
+
+<div class="row">
+<div class="form-group">
+<label>生成数量</label>
+<input type="number" id="count" value="10" min="1" max="500">
+</div>
+<div class="form-group">
+<label>批次标识（可选）</label>
+<input type="text" id="batchTag" placeholder="如 0801" maxlength="6">
+</div>
+</div>
+
+<button class="btn btn-primary" onclick="generate()">生成序列号</button>
+<button class="btn btn-secondary" onclick="toggleJson()">查看/隐藏 JSON 格式</button>
+
+<div class="result" id="result">
+<div class="result-header">
+<h3 id="resultTitle">生成结果</h3>
+<button class="copy-all-btn" onclick="copyAll()">复制全部</button>
+</div>
+<div class="serial-list" id="serialList"></div>
+<div class="json-output" id="jsonOutput">
+<label>JSON格式（直接粘贴到 SERIAL_TABLE 数组中）</label>
+<textarea id="jsonText" readonly onclick="this.select()"></textarea>
+</div>
+<div class="info-box">
+<strong>使用说明：</strong><br>
+1. 选择套餐类型和数量，点击生成<br>
+2. 复制 JSON 格式代码<br>
+3. 粘贴到 index.html 的 <code>SERIAL_TABLE</code> 数组末尾（在 <code>]</code> 之前加逗号）<br>
+4. 重新生成部署脚本并发布
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+function generateRandomCode(prefix,dateStr,batch){
+var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+var code='';
+for(var i=0;i<2;i++){code+=chars[Math.floor(Math.random()*chars.length)]}
+var num=String(Math.floor(Math.random()*99)).padStart(2,'0');
+return prefix+'-'+dateStr+(batch?'-'+batch:'')+'-'+code+num;
+}
+function getDays(tier){
+if(tier==='M')return 30;
+if(tier==='P')return 36500;
+var d=parseInt(document.getElementById('customDays').value)||30;
+return d;
+}
+function getPrefix(tier){
+if(tier==='M')return 'VIP-M';
+if(tier==='P')return 'VIP-P';
+return 'VIP-D';
+}
+function generate(){
+var tier=document.getElementById('tierType').value;
+var count=parseInt(document.getElementById('count').value)||10;
+var batch=document.getElementById('batchTag').value.trim().toUpperCase();
+var days=getDays(tier);
+var prefix=getPrefix(tier);
+var now=new Date();
+var dateStr=String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0');
+var generated=[];
+var seen={};
+for(var i=0;i<count;i++){
+var code;
+var attempts=0;
+do{
+code=generateRandomCode(prefix,dateStr,batch);
+attempts++;
+}while(seen[code]&&attempts<100);
+seen[code]=true;
+generated.push({code:code,status:'未使用',days:days,activatedAt:'',expiresAt:''});
+}
+renderResult(generated);
+}
+function renderResult(list){
+var el=document.getElementById('result');
+var listEl=document.getElementById('serialList');
+var titleEl=document.getElementById('resultTitle');
+el.classList.add('show');
+titleEl.textContent='已生成 '+list.length+' 个序列号';
+var html='';
+list.forEach(function(item){
+html+='<div class="serial-item"><span class="code">'+item.code+'</span><button class="copy-btn" onclick="copyOne(this,\''+item.code+'\')">复制</button></div>';
+});
+listEl.innerHTML=html;
+var jsonText=JSON.stringify(list).replace(/^\[/,'').replace(/\]$/,'');
+document.getElementById('jsonText').value=jsonText;
+}
+function copyOne(btn,code){
+if(navigator.clipboard&&navigator.clipboard.writeText){
+navigator.clipboard.writeText(code);
+}else{
+var ta=document.createElement('textarea');ta.value=code;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+}
+btn.textContent='已复制';btn.classList.add('copied');
+setTimeout(function(){btn.textContent='复制';btn.classList.remove('copied')},1500);
+}
+function copyAll(){
+var text=document.getElementById('jsonText').value;
+if(navigator.clipboard&&navigator.clipboard.writeText){
+navigator.clipboard.writeText(text);
+}else{
+var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+}
+showToast('JSON已复制到剪贴板');
+}
+function toggleJson(){
+var el=document.getElementById('jsonOutput');
+el.classList.toggle('show');
+}
+function showToast(msg){
+var t=document.getElementById('toast');
+t.textContent=msg;
+t.classList.add('show');
+setTimeout(function(){t.classList.remove('show')},2000);
+}
+document.getElementById('tierType').addEventListener('change',function(){
+document.getElementById('customDaysGroup').style.display=this.value==='D'?'block':'none';
+});
+</script>
+</body>
+</html>
