@@ -205,6 +205,41 @@ body.dark .loadingShimmer::after{background:linear-gradient(90deg,transparent,rg
 .rewardAmountInfo .payee{font-size:12px;color:#999;margin-top:2px}
 .rewardTip{text-align:center;font-size:11px;color:#b67800;margin:12px 20px 0}
 
+/* === announcement modal === */
+.annModal{position:fixed;inset:0;z-index:97;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:20px}
+.annModal.show{display:flex;animation:annFadeIn .25s ease}
+@keyframes annFadeIn{from{opacity:0}to{opacity:1}}
+.annCard{background:#fff;border-radius:16px;overflow:hidden;width:100%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,.2);animation:annPop .3s cubic-bezier(.22,1,.36,1) both}
+@keyframes annPop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.annHeader{background:linear-gradient(135deg,#fffbef,#fff7e0);padding:24px 20px 14px;text-align:center;border-bottom:1px solid #eee;position:relative}
+.annIconWrap{width:52px;height:52px;margin:0 auto 8px;background:linear-gradient(135deg,#f0b429,#e69500);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(240,180,41,.35)}
+.annIconWrap span{font-size:26px}
+.annHeader h3{font-size:16px;font-weight:700;color:#8b6914;margin:0}
+.annHeader .annSub{font-size:11px;color:#999;margin-top:2px}
+.annClose{position:absolute;top:10px;right:10px;width:28px;height:28px;border:none;background:rgba(0,0,0,.06);border-radius:50%;font-size:16px;color:#999;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;transition:background .2s,transform .15s}
+.annClose:hover{background:rgba(0,0,0,.12);transform:rotate(90deg)}
+.annBody{padding:16px 20px}
+.annMeta{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.annTag{font-size:11px;padding:3px 10px;border-radius:999px;font-weight:600}
+.annTagGold{background:#fff7e0;color:#b67800}
+.annTagTime{background:#e8f5e9;color:#2e7d32}
+.annTagNew{background:#e3f2fd;color:#1565c0}
+.annBody p{font-size:14px;line-height:1.7;color:#333;margin:0 0 10px}
+.annBody .annHighlight{color:#b67800;font-weight:700}
+.annInfoBox{background:#fafaf5;border:1px solid #eee;border-radius:10px;padding:12px;margin:12px 0}
+.annInfoBox .annRow{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
+.annInfoBox .annRow .lbl{color:#999}
+.annInfoBox .annRow .val{color:#151515;font-weight:600}
+.annNote{font-size:12px;color:#999;line-height:1.5;margin:8px 0 0;padding-left:18px;position:relative}
+.annNote:before{content:'📋';position:absolute;left:0;top:0}
+.annFooter{padding:10px 20px 16px;border-top:1px solid #eee;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.annCheckLabel{font-size:13px;color:#999;display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.annCheckBox{width:16px;height:16px;border:1.5px solid #e69500;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s}
+.annCheckBox.checked{background:#e69500}
+.annCheckBox.checked:after{content:'✓';color:#fff;font-size:11px;font-weight:700}
+.annBtnKnow{background:linear-gradient(135deg,#f0b429,#e69500);color:#fff;border:none;border-radius:10px;padding:8px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(240,180,41,.3);transition:transform .15s}
+.annBtnKnow:active{transform:scale(.96)}
+
 /* === settings-ui === */
 .tabSettingsBtn{background:transparent;color:var(--muted);border-radius:999px;padding:6px 4px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-direction:column;line-height:1.05;min-height:34px;font-size:18px;border:none;cursor:pointer;opacity:.85;transition:all .2s ease}
 .tabSettingsBtn:hover{opacity:1;transform:scale(1.05)}
@@ -724,7 +759,7 @@ body.theme-greenup{--red:#079455;--green:#d92d20}
       <div class="settingsGroup">
         <div class="settingsGroupTitle">关于</div>
         <div class="settingsAbout">
-          <div class="settingsAboutItem"><span>版本</span><strong>v1.5.66</strong></div>
+          <div class="settingsAboutItem"><span>版本</span><strong>v1.5.67</strong></div>
           <div class="settingsAboutItem"><span>客服微信</span><strong>19240252146</strong></div>
           <div class="settingsAboutItem"><span>数据来源</span><strong>东方财富 / 新浪财经</strong></div>
           <div class="settingsAboutNote">行情数据来自公开接口，仅供参考，不构成投资建议。</div>
@@ -978,5 +1013,63 @@ function getDeviceCode(){let dc='';try{dc=localStorage.getItem('deviceCode')||''
 <div id="heatmapModal" class="heatmapModal" onclick="closeHeatmap(event)" aria-hidden="true"><div class="heatmapSheet" onclick="event.stopPropagation()"><div class="heatmapHeader"><h3>🔥 市场热力图</h3><button class="heatmapClose" type="button" onclick="closeHeatmap()" aria-label="关闭">×</button></div><div class="heatmapBody"><div class="heatmapGrid" id="heatmapGrid"></div><div class="heatmapLegend"><span><span class="dot up"></span>上涨</span><span><span class="dot down"></span>下跌</span><span><span class="dot flat"></span>平盘</span></div></div></div></div>
 <script>var _heatmapTimer=null;function openHeatmap(){var m=document.getElementById('heatmapModal');if(m){m.classList.add('show');m.setAttribute('aria-hidden','false');generateHeatmap();if(_heatmapTimer)clearInterval(_heatmapTimer);_heatmapTimer=setInterval(generateHeatmap,2000)}}function closeHeatmap(e){if(e&&e.target&&e.target.id!=='heatmapModal')return;var m=document.getElementById('heatmapModal');if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true')}if(_heatmapTimer){clearInterval(_heatmapTimer);_heatmapTimer=null}}function generateHeatmap(){var grid=document.getElementById('heatmapGrid');if(!grid)return;var html='';var items=[];if(typeof quoteMap!=='undefined'&&quoteMap&&quoteMap.size>0){quoteMap.forEach(function(v,k){items.push({name:v.f14||k,pct:Number(v.f3)||0})})}if(typeof boardAllData!=='undefined'&&boardAllData&&boardAllData.length>0){boardAllData.forEach(function(b){items.push({name:b.f14||b.f12,pct:Number(b.f3)||0})})}if(items.length===0){var sectors=['上证','深证','创业板','科创50','沪深300','中证500','中证1000','恒生','恒生科技','纳指','道指','标普','半导体','人工智能','新能源','光伏','军工','银行','证券','医药','煤炭','有色','基建','电力','石油','白酒','消费','科技','地产','环保'];for(var i=0;i<sectors.length;i++){html+='<div class="heatmapCell flash-flat">'+sectors[i]+'<br>--</div>'}grid.innerHTML=html;return}items.sort(function(a,b){return Math.abs(Number(b.pct))-Math.abs(Number(a.pct))});for(var i=0;i<items.length;i++){var x=items[i];var cls=x.pct>0.01?'flash-up':x.pct<-0.01?'flash-down':'flash-flat';var pct=(x.pct>=0?'+':'')+x.pct.toFixed(2)+'%';html+='<div class="heatmapCell '+cls+'">'+x.name+'<br>'+pct+'</div>'}grid.innerHTML=html}</script>
 <button class="rewardFloat" type="button" onclick="rewardClick(event)" aria-label="打赏支持" title="送花支持"><span class="rewardTooltip">送花支持</span><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>
-<script>var _rewardHearts=['❤️','💖','💕','💗','💝','💘','❤️','💖'];var _rewardHeartTimer=null;var _rewardBtn=null;function rewardClick(e){var btn=e&&e.currentTarget;if(btn){var burst=document.createElement('span');burst.className='clickBurst';btn.appendChild(burst);setTimeout(function(){burst.remove()},700);var burst2=document.createElement('span');burst2.className='clickBurst2';btn.appendChild(burst2);setTimeout(function(){burst2.remove()},800)}spawnHearts(e,12);setTimeout(function(){openRewardModal()},350)}function openRewardModal(){var m=document.getElementById('rewardModal');if(m){m.classList.add('show');m.setAttribute('aria-hidden','false')}}function closeRewardModal(e){var m=document.getElementById('rewardModal');if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true')}}function spawnHearts(e,count){count=count||8;var btn=(e&&e.currentTarget)||_rewardBtn;if(!btn)return;var rect=btn.getBoundingClientRect();var cx=rect.left+rect.width/2;var cy=rect.top+rect.height/2;for(var i=0;i<count;i++){var h=document.createElement('div');h.className='heartParticle';h.textContent=_rewardHearts[Math.floor(Math.random()*_rewardHearts.length)];h.style.left=cx+'px';h.style.top=cy+'px';var angle=Math.random()*Math.PI-Math.PI/2;var dist=15+Math.random()*40;h.style.setProperty('--dx',Math.cos(angle)*dist+'px');h.style.setProperty('--rot',(Math.random()*60-30)+'deg');h.style.animationDelay=(i*0.06)+'s';h.style.fontSize=(12+Math.random()*10)+'px';document.body.appendChild(h);(function(el){setTimeout(function(){el.remove()},2500)})(h)}}function _rewardHeartLoop(){var btn=document.querySelector('.rewardFloat');if(!btn)return;_rewardBtn=btn;spawnHearts(null,1)}function _startRewardHearts(){_rewardHeartLoop();if(_rewardHeartTimer)clearInterval(_rewardHeartTimer);_rewardHeartTimer=setInterval(_rewardHeartLoop,1300)}if('requestIdleCallback' in window){requestIdleCallback(function(){_startRewardHearts()},{timeout:3000})}else{setTimeout(_startRewardHearts,1000)}document.addEventListener('keydown',function(e){if(e.key==='Escape'){var pm=document.getElementById('payModal');if(pm&&pm.classList.contains('show'))return}});</script><script>(function(){var btn=document.querySelector('.rewardFloat');if(!btn)return;btn.addEventListener('mousemove',function(e){var rect=btn.getBoundingClientRect();var x=e.clientX-rect.left-rect.width/2;var y=e.clientY-rect.top-rect.height/2;btn.style.transform='perspective(280px) rotateY('+(x/10)+'deg) rotateX('+(-y/10)+'deg) scale(1.14) translateY(-3px)';});btn.addEventListener('mouseleave',function(){btn.style.transform='';});})();</script><script>var _catCoins=['🪙','💰','💴','🧧','🪙','💰','💵'];var _catCoinTimer=null;function spawnCatCoins(count){count=count||2;var cat=document.querySelector('.catMascotFloat');if(!cat)return;var rect=cat.getBoundingClientRect();var cx=rect.left+rect.width/2;var cy=rect.top+rect.height/2;for(var i=0;i<count;i++){var c=document.createElement('div');c.className='coinParticle';c.textContent=_catCoins[Math.floor(Math.random()*_catCoins.length)];c.style.left=cx+'px';c.style.top=cy+'px';var angle=Math.random()*Math.PI-Math.PI/2;var dist=10+Math.random()*35;c.style.setProperty('--dx',Math.cos(angle)*dist+'px');c.style.setProperty('--rot',(Math.random()*80-40)+'deg');c.style.animationDelay=(i*0.08)+'s';c.style.fontSize=(13+Math.random()*8)+'px';document.body.appendChild(c);(function(el){setTimeout(function(){el.remove()},2800)})(c)}}function _startCatCoins(){spawnCatCoins(2);if(_catCoinTimer)clearInterval(_catCoinTimer);_catCoinTimer=setInterval(function(){spawnCatCoins(2)},2000)}if('requestIdleCallback' in window){requestIdleCallback(function(){_startCatCoins()},{timeout:3000})}else{setTimeout(_startCatCoins,1000)}</script><div id="rewardModal" class="rewardModal" onclick="closeRewardModal(event)" aria-hidden="true"><div class="rewardSheet" onclick="event.stopPropagation()"><div class="rewardIconWrap"><div class="rewardCatPaw">🌸</div></div><div class="rewardTitle">送 <b>财猫</b> 一朵花</div><div class="rewardDesc">感谢你的支持，让我更有动力做好这个看板</div><div class="rewardQrSection"><div class="rewardQrBanner">推荐使用微信支付</div><div class="rewardQrImgBox"><img class="rewardQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=12&data=https%3A%2F%2Fpayapp.wechatpay.cn%2Fsjt%2Fqr%2FAQGbT_kzThE10pcqnshJOSov" alt="微信付款二维码"><div class="rewardQrMerchant">财猫看基 <span class="verified">✓</span></div><div class="rewardPayInfo"><span class="wxIcon">W</span>微信支付</div></div></div><div class="rewardAmountInfo"><div class="amt">¥5.20</div><div class="payee">财猫看板</div></div><div class="rewardTip">长按二维码保存，打开微信扫一扫支付 · 付款后请备注手机号</div></div></div><!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' defer data-cf-beacon='{"token": "730c4afbbc904eaa9df570e27d5a3b75"}'></script><!-- End Cloudflare Web Analytics --></body></html>
+<script>var _rewardHearts=['❤️','💖','💕','💗','💝','💘','❤️','💖'];var _rewardHeartTimer=null;var _rewardBtn=null;function rewardClick(e){var btn=e&&e.currentTarget;if(btn){var burst=document.createElement('span');burst.className='clickBurst';btn.appendChild(burst);setTimeout(function(){burst.remove()},700);var burst2=document.createElement('span');burst2.className='clickBurst2';btn.appendChild(burst2);setTimeout(function(){burst2.remove()},800)}spawnHearts(e,12);setTimeout(function(){openRewardModal()},350)}function openRewardModal(){var m=document.getElementById('rewardModal');if(m){m.classList.add('show');m.setAttribute('aria-hidden','false')}}function closeRewardModal(e){var m=document.getElementById('rewardModal');if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true')}}function spawnHearts(e,count){count=count||8;var btn=(e&&e.currentTarget)||_rewardBtn;if(!btn)return;var rect=btn.getBoundingClientRect();var cx=rect.left+rect.width/2;var cy=rect.top+rect.height/2;for(var i=0;i<count;i++){var h=document.createElement('div');h.className='heartParticle';h.textContent=_rewardHearts[Math.floor(Math.random()*_rewardHearts.length)];h.style.left=cx+'px';h.style.top=cy+'px';var angle=Math.random()*Math.PI-Math.PI/2;var dist=15+Math.random()*40;h.style.setProperty('--dx',Math.cos(angle)*dist+'px');h.style.setProperty('--rot',(Math.random()*60-30)+'deg');h.style.animationDelay=(i*0.06)+'s';h.style.fontSize=(12+Math.random()*10)+'px';document.body.appendChild(h);(function(el){setTimeout(function(){el.remove()},2500)})(h)}}function _rewardHeartLoop(){var btn=document.querySelector('.rewardFloat');if(!btn)return;_rewardBtn=btn;spawnHearts(null,1)}function _startRewardHearts(){_rewardHeartLoop();if(_rewardHeartTimer)clearInterval(_rewardHeartTimer);_rewardHeartTimer=setInterval(_rewardHeartLoop,1300)}if('requestIdleCallback' in window){requestIdleCallback(function(){_startRewardHearts()},{timeout:3000})}else{setTimeout(_startRewardHearts,1000)}document.addEventListener('keydown',function(e){if(e.key==='Escape'){var pm=document.getElementById('payModal');if(pm&&pm.classList.contains('show'))return}});</script><script>(function(){var btn=document.querySelector('.rewardFloat');if(!btn)return;btn.addEventListener('mousemove',function(e){var rect=btn.getBoundingClientRect();var x=e.clientX-rect.left-rect.width/2;var y=e.clientY-rect.top-rect.height/2;btn.style.transform='perspective(280px) rotateY('+(x/10)+'deg) rotateX('+(-y/10)+'deg) scale(1.14) translateY(-3px)';});btn.addEventListener('mouseleave',function(){btn.style.transform='';});})();</script><script>var _catCoins=['🪙','💰','💴','🧧','🪙','💰','💵'];var _catCoinTimer=null;function spawnCatCoins(count){count=count||2;var cat=document.querySelector('.catMascotFloat');if(!cat)return;var rect=cat.getBoundingClientRect();var cx=rect.left+rect.width/2;var cy=rect.top+rect.height/2;for(var i=0;i<count;i++){var c=document.createElement('div');c.className='coinParticle';c.textContent=_catCoins[Math.floor(Math.random()*_catCoins.length)];c.style.left=cx+'px';c.style.top=cy+'px';var angle=Math.random()*Math.PI-Math.PI/2;var dist=10+Math.random()*35;c.style.setProperty('--dx',Math.cos(angle)*dist+'px');c.style.setProperty('--rot',(Math.random()*80-40)+'deg');c.style.animationDelay=(i*0.08)+'s';c.style.fontSize=(13+Math.random()*8)+'px';document.body.appendChild(c);(function(el){setTimeout(function(){el.remove()},2800)})(c)}}function _startCatCoins(){spawnCatCoins(2);if(_catCoinTimer)clearInterval(_catCoinTimer);_catCoinTimer=setInterval(function(){spawnCatCoins(2)},2000)}if('requestIdleCallback' in window){requestIdleCallback(function(){_startCatCoins()},{timeout:3000})}else{setTimeout(_startCatCoins,1000)}</script><div id="rewardModal" class="rewardModal" onclick="closeRewardModal(event)" aria-hidden="true"><div class="rewardSheet" onclick="event.stopPropagation()"><div class="rewardIconWrap"><div class="rewardCatPaw">🌸</div></div><div class="rewardTitle">送 <b>财猫</b> 一朵花</div><div class="rewardDesc">感谢你的支持，让我更有动力做好这个看板</div><div class="rewardQrSection"><div class="rewardQrBanner">推荐使用微信支付</div><div class="rewardQrImgBox"><img class="rewardQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=12&data=https%3A%2F%2Fpayapp.wechatpay.cn%2Fsjt%2Fqr%2FAQGbT_kzThE10pcqnshJOSov" alt="微信付款二维码"><div class="rewardQrMerchant">财猫看基 <span class="verified">✓</span></div><div class="rewardPayInfo"><span class="wxIcon">W</span>微信支付</div></div></div><div class="rewardAmountInfo"><div class="amt">¥5.20</div><div class="payee">财猫看板</div></div><div class="rewardTip">长按二维码保存，打开微信扫一扫支付 · 付款后请备注手机号</div></div></div>
+<!-- announcement modal -->
+<div id="annModal" class="annModal" onclick="closeAnnModal(event)" aria-hidden="true"><div class="annCard" onclick="event.stopPropagation()"><div class="annHeader"><button class="annClose" type="button" onclick="closeAnnModal()" aria-label="关闭">×</button><div class="annIconWrap"><span id="annIcon">📢</span></div><h3 id="annTitle">系统升级公告</h3><div class="annSub" id="annSub">财猫看板 · 更新通知</div></div><div class="annBody"><div class="annMeta" id="annMeta"></div><p id="annContent"></p><div class="annInfoBox" id="annInfoBox"></div><p id="annContent2"></p><div class="annNote" id="annNote"></div></div><div class="annFooter"><label class="annCheckLabel" onclick="toggleAnnCheck()"><span class="annCheckBox" id="annCheckBox"></span>今日不再显示</label><button class="annBtnKnow" type="button" onclick="closeAnnModal()">我知道了</button></div></div></div>
+<script>
+var ANNOUNCEMENT={
+  id:'20260803-01',
+  icon:'📢',
+  title:'系统升级公告',
+  sub:'财猫看板 · 更新通知',
+  content:'各位搞钱人注意啦！财猫看板将于<span class="annHighlight">今晚 23:00 - 23:30</span> 进行系统升级优化，届时页面可能短暂无法访问。',
+  tags:[{cls:'annTagGold',text:'📍 更新通知'},{cls:'annTagTime',text:'🕐 今晚 23:00'}],
+  infoRows:[{lbl:'升级时间',val:'23:00 - 23:30'},{lbl:'影响范围',val:'页面短暂不可访问'},{lbl:'新增功能',val:'公告系统 · 数据优化'},{lbl:'预计恢复',val:'23:30 前'}],
+  content2:'升级完成后刷新页面即可正常使用，给大家带来的不便敬请谅解 🐱',
+  note:'升级期间建议不要进行序列号激活操作'
+};
+var _annChecked=false;
+function getAnnDismissKey(){return 'annDismiss_'+(ANNOUNCEMENT.id||'')}
+function getAnnDismissDate(){try{return localStorage.getItem('annDismissDate')||''}catch(e){return ''}}
+function shouldShowAnn(){
+  if(!ANNOUNCEMENT||!ANNOUNCEMENT.id)return false;
+  var key=getAnnDismissKey();
+  try{if(localStorage.getItem(key)==='1')return false}catch(e){}
+  var today=new Date();var todayStr=String(today.getFullYear())+String(today.getMonth()+1).padStart(2,'0')+String(today.getDate()).padStart(2,'0');
+  var dismissDate=getAnnDismissDate();
+  if(dismissDate===todayStr){
+    try{if(localStorage.getItem('annToday_'+ANNOUNCEMENT.id)==='1')return false}catch(e){}
+  }
+  return true
+}
+function renderAnn(){
+  if(!shouldShowAnn())return;
+  var m=document.getElementById('annModal');if(!m)return;
+  var icon=document.getElementById('annIcon');if(icon)icon.textContent=ANNOUNCEMENT.icon||'📢';
+  var title=document.getElementById('annTitle');if(title)title.textContent=ANNOUNCEMENT.title||'公告';
+  var sub=document.getElementById('annSub');if(sub)sub.textContent=ANNOUNCEMENT.sub||'财猫看板';
+  var meta=document.getElementById('annMeta');if(meta){meta.innerHTML='';if(ANNOUNCEMENT.tags){ANNOUNCEMENT.tags.forEach(function(t){var s=document.createElement('span');s.className='annTag '+t.cls;s.textContent=t.text;meta.appendChild(s)})}}
+  var c=document.getElementById('annContent');if(c)c.innerHTML=ANNOUNCEMENT.content||'';
+  var box=document.getElementById('annInfoBox');if(box){box.innerHTML='';if(ANNOUNCEMENT.infoRows){ANNOUNCEMENT.infoRows.forEach(function(r){var d=document.createElement('div');d.className='annRow';d.innerHTML='<span class="lbl">'+r.lbl+'</span><span class="val">'+r.val+'</span>';box.appendChild(d)})}}
+  var c2=document.getElementById('annContent2');if(c2)c2.innerHTML=ANNOUNCEMENT.content2||'';
+  var note=document.getElementById('annNote');if(note)note.textContent=ANNOUNCEMENT.note||'';
+  _annChecked=false;
+  var cb=document.getElementById('annCheckBox');if(cb)cb.classList.remove('checked');
+  m.classList.add('show');m.setAttribute('aria-hidden','false')
+}
+function toggleAnnCheck(){
+  _annChecked=!_annChecked;
+  var cb=document.getElementById('annCheckBox');if(cb)cb.classList.toggle('checked',_annChecked)
+}
+function closeAnnModal(e){
+  if(e&&e.target&&e.target.id!=='annModal')return;
+  if(_annChecked){
+    try{localStorage.setItem(getAnnDismissKey(),'1');var today=new Date();var todayStr=String(today.getFullYear())+String(today.getMonth()+1).padStart(2,'0')+String(today.getDate()).padStart(2,'0');localStorage.setItem('annDismissDate',todayStr);localStorage.setItem('annToday_'+(ANNOUNCEMENT.id||''),'1')}catch(e){}
+  }
+  var m=document.getElementById('annModal');if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true')}
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){var m=document.getElementById('annModal');if(m&&m.classList.contains('show'))closeAnnModal()}});
+if('requestIdleCallback' in window){requestIdleCallback(function(){renderAnn()},{timeout:2000})}else{setTimeout(renderAnn,800)}
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' defer data-cf-beacon='{"token": "730c4afbbc904eaa9df570e27d5a3b75"}'></script><!-- End Cloudflare Web Analytics --></body></html>
 
