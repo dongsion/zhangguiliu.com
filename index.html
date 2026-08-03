@@ -759,7 +759,7 @@ body.theme-greenup{--red:#079455;--green:#d92d20}
       <div class="settingsGroup">
         <div class="settingsGroupTitle">关于</div>
         <div class="settingsAbout">
-          <div class="settingsAboutItem"><span>版本</span><strong>v1.5.67</strong></div>
+          <div class="settingsAboutItem"><span>版本</span><strong>v1.5.68</strong></div>
           <div class="settingsAboutItem"><span>客服微信</span><strong>19240252146</strong></div>
           <div class="settingsAboutItem"><span>数据来源</span><strong>东方财富 / 新浪财经</strong></div>
           <div class="settingsAboutNote">行情数据来自公开接口，仅供参考，不构成投资建议。</div>
@@ -1018,15 +1018,15 @@ function getDeviceCode(){let dc='';try{dc=localStorage.getItem('deviceCode')||''
 <div id="annModal" class="annModal" onclick="closeAnnModal(event)" aria-hidden="true"><div class="annCard" onclick="event.stopPropagation()"><div class="annHeader"><button class="annClose" type="button" onclick="closeAnnModal()" aria-label="关闭">×</button><div class="annIconWrap"><span id="annIcon">📢</span></div><h3 id="annTitle">系统升级公告</h3><div class="annSub" id="annSub">财猫看板 · 更新通知</div></div><div class="annBody"><div class="annMeta" id="annMeta"></div><p id="annContent"></p><div class="annInfoBox" id="annInfoBox"></div><p id="annContent2"></p><div class="annNote" id="annNote"></div></div><div class="annFooter"><label class="annCheckLabel" onclick="toggleAnnCheck()"><span class="annCheckBox" id="annCheckBox"></span>今日不再显示</label><button class="annBtnKnow" type="button" onclick="closeAnnModal()">我知道了</button></div></div></div>
 <script>
 var ANNOUNCEMENT={
-  id:'20260803-01',
-  icon:'📢',
-  title:'系统升级公告',
-  sub:'财猫看板 · 更新通知',
-  content:'各位搞钱人注意啦！财猫看板将于<span class="annHighlight">今晚 23:00 - 23:30</span> 进行系统升级优化，届时页面可能短暂无法访问。',
-  tags:[{cls:'annTagGold',text:'📍 更新通知'},{cls:'annTagTime',text:'🕐 今晚 23:00'}],
-  infoRows:[{lbl:'升级时间',val:'23:00 - 23:30'},{lbl:'影响范围',val:'页面短暂不可访问'},{lbl:'新增功能',val:'公告系统 · 数据优化'},{lbl:'预计恢复',val:'23:30 前'}],
-  content2:'升级完成后刷新页面即可正常使用，给大家带来的不便敬请谅解 🐱',
-  note:'升级期间建议不要进行序列号激活操作'
+  id:'20260803-v1568',
+  icon:'✨',
+  title:'v1.5.68 版本更新公告',
+  sub:'财猫看板 · 新功能上线',
+  content:'各位搞钱人！财猫看板<span class="annHighlight">v1.5.68</span>版本更新来啦，本次带来多项功能升级和数据优化，让大家搞钱更顺手 🐱',
+  tags:[{cls:'annTagNew',text:'✨ 新功能上线'},{cls:'annTagGold',text:'🎁 v1.5.68'},{cls:'annTagTime',text:'🕐 已上线'}],
+  infoRows:[{lbl:'公告系统',val:'全新公告弹窗，重要通知不再错过'},{lbl:'资金流改版',val:'30个板块涨跌排行，黄金/电力/半导体一目了然'},{lbl:'数据升级',val:'A股全量5000+只数据，基金分类涨跌更精准'},{lbl:'设备绑定',val:'序列号一码一机，更安全'},{lbl:'热力图',val:'100+标的热力图，红绿闪烁看市场'},{lbl:'签到功能',val:'每日签到，连续30天领7天VIP'}],
+  content2:'本次更新无需手动操作，刷新页面即可体验新功能。如有问题请联系管理员微信：<span class="annHighlight">19240252146</span>',
+  note:'本次更新不影响已激活的VIP序列号，无需重新激活'
 };
 var _annChecked=false;
 function getAnnDismissKey(){return 'annDismiss_'+(ANNOUNCEMENT.id||'')}
