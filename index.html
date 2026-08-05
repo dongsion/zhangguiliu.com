@@ -471,7 +471,7 @@ body.theme-greenup{--red:#079455;--green:#d92d20}
 @keyframes heatmapPulse{0%,100%{box-shadow:0 6px 20px rgba(250,112,154,.35),0 0 0 0 rgba(254,225,64,.25),inset 0 1px 0 rgba(255,255,255,.4)}50%{box-shadow:0 6px 20px rgba(250,112,154,.35),0 0 0 12px rgba(254,225,64,0),inset 0 1px 0 rgba(255,255,255,.4)}}
 .heatmapModal{position:fixed;inset:0;z-index:94;display:none;align-items:flex-end;justify-content:center;padding:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .heatmapModal.show{display:flex}
-.heatmapSheet{width:100%;max-width:480px;max-height:90vh;overflow-y:auto;border-radius:24px 24px 0 0;background:#fff;color:#101828;padding:0 0 calc(20px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 40px rgba(0,0,0,.22);animation:settingsSlideUp .3s ease}
+.heatmapSheet{width:100%;max-width:480px;max-height:88vh;overflow-y:auto;border-radius:24px 24px 0 0;background:#fff;color:#101828;padding:0 0 calc(72px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 40px rgba(0,0,0,.22);animation:settingsSlideUp .3s ease}
 .heatmapHeader{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid #f2f4f7}
 .heatmapHeader h3{margin:0;font-size:18px;font-weight:700}
 .heatmapClose{width:32px;height:32px;border-radius:50%;background:#f2f4f7;color:#344054;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer}
@@ -814,7 +814,7 @@ body.theme-greenup{--red:#079455;--green:#d92d20}
       <div class="settingsGroup">
         <div class="settingsGroupTitle">关于</div>
         <div class="settingsAbout">
-          <div class="settingsAboutItem"><span>版本</span><strong>v1.5.73</strong></div>
+          <div class="settingsAboutItem"><span>版本</span><strong>v1.5.74</strong></div>
           <div class="settingsAboutItem"><span>客服微信</span><strong>19240252146</strong></div>
           <div class="settingsAboutItem"><span>数据来源</span><strong>东方财富 / 新浪财经</strong></div>
           <div class="settingsAboutNote">行情数据来自公开接口，仅供参考，不构成投资建议。</div>
@@ -1093,7 +1093,7 @@ var ANNOUNCEMENT={
   sub:'财猫看板 · 功能更新',
   content:'各位搞钱人！两大新功能上线：<b>骨架屏加载态</b>（数据加载时显示闪烁占位动画，告别空白等待）+ <b>信号推送提醒</b>（大跌预警、强势主线、资金异动自动推送浏览器通知，不用盯盘）。',
   tags:[{cls:'annTagGold',text:'✨ 功能更新'},{cls:'annTagTime',text:'✅ 已上线'}],
-  infoRows:[{lbl:'新增功能',val:'骨架屏加载态 + 信号推送提醒'},{lbl:'骨架屏',val:'数据加载时显示闪烁占位动画，加载完成后自动替换'},{lbl:'信号推送',val:'在设置中开启通知，支持大跌预警/强势主线/资金异动'},{lbl:'版本',val:'v1.5.73'}],
+  infoRows:[{lbl:'新增功能',val:'骨架屏加载态 + 信号推送提醒'},{lbl:'骨架屏',val:'数据加载时显示闪烁占位动画，加载完成后自动替换'},{lbl:'信号推送',val:'在设置中开启通知，支持大跌预警/强势主线/资金异动'},{lbl:'版本',val:'v1.5.74'}],
   content2:'打开设置 → 信号推送提醒 → 开启通知，即可接收关键信号推送。支持自定义大跌预警阈值、开关各类提醒、免打扰时段（15:00-09:00）。骨架屏在页面加载时自动生效，无需设置。',
   note:'信号基于公开行情自动计算，仅作参考，不构成投资建议'
 };
