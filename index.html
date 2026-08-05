@@ -44,6 +44,22 @@
 .sectorRotationHeatTag.hot{background:rgba(220,38,38,.1);color:#dc2626}
 .sectorRotationHeatTag.cool{background:rgba(22,163,74,.1);color:#16a34a}
 .sectorRotationHeatTag.warm{background:rgba(245,158,11,.1);color:#f59e0b}
+
+.sectorRotationPredict{margin-top:14px;padding-top:14px;border-top:2px dashed var(--line)}
+.sectorRotationPredictTitle{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.sectorRotationPredictSub{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5}
+.sectorRotationPredictGroup{margin-bottom:10px}
+.sectorRotationPredictLabel{font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px;margin-bottom:6px;display:inline-block}
+.sectorRotationPredictLabel:nth-child(1){background:rgba(99,102,241,.08);color:#6366f1}
+.sectorRotationPredictItem{display:flex;align-items:center;gap:8px;padding:5px 8px;margin-bottom:3px;background:var(--soft);border-radius:6px}
+.sectorRotationPredictName{flex:1;font-size:12px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sectorRotationPredictPct{flex:0 0 60px;font-size:12px;font-weight:700;text-align:right}
+.sectorRotationPredictPct.red{color:#dc2626}
+.sectorRotationPredictPct.green{color:#16a34a}
+.sectorRotationPredictFlow{flex:0 0 auto;font-size:10px;padding:2px 6px;border-radius:4px}
+.sectorRotationPredictFlow.red{background:rgba(220,38,38,.08);color:#dc2626}
+.sectorRotationPredictFlow.green{background:rgba(22,163,74,.08);color:#16a34a}
+
 .sectorRotationEmpty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
 .sectorRotationNote{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;padding:8px 10px;background:var(--soft);border-radius:6px}
 .winRateTrendWrap{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -890,7 +906,7 @@ body.theme-greenup{--red:#079455;--green:#d92d20}
       <div class="settingsGroup">
         <div class="settingsGroupTitle">关于</div>
         <div class="settingsAbout">
-          <div class="settingsAboutItem"><span>版本</span><strong>v1.5.90</strong></div>
+          <div class="settingsAboutItem"><span>版本</span><strong>v1.5.91</strong></div>
           <div class="settingsAboutItem"><span>客服微信</span><strong>19240252146</strong></div>
           <div class="settingsAboutItem"><span>数据来源</span><strong>东方财富 / 新浪财经</strong></div>
           <div class="settingsAboutNote">行情数据来自公开接口，仅供参考，不构成投资建议。</div>
@@ -1083,6 +1099,85 @@ function renderSectorRotation(){
   heatTags+='<span class="sectorRotationHeatTag '+(up.length>=10?'hot':'warm')+'">上涨 '+up.length+'</span>';
   heatTags+='<span class="sectorRotationHeatTag '+(down.length>=10?'cool':'warm')+'">下跌 '+down.length+'</span>';
   heatTags+='<span class="sectorRotationHeatTag warm">平盘 '+flat.length+'</span>';
+
+  // === Next rotation prediction ===
+  // Logic: find sectors that are likely to be the next rotation target
+  // Criteria: 1) Low position (pct < 1%), 2) Capital inflow (flow > 0), 3) Not already top gainer
+  var rotationCandidates=sectors.filter(function(s){
+    return s.pct<1 && Number.isFinite(s.flow) && s.flow>0;
+  }).sort(function(a,b){
+    // Sort by flow descending (more inflow = higher priority)
+    return b.flow-a.flow;
+  }).slice(0,5);
+
+  // Also find "oversold rebound" candidates: deep decline but with capital inflow
+  var reboundCandidates=sectors.filter(function(s){
+    return s.pct<-1 && Number.isFinite(s.flow) && s.flow>0;
+  }).sort(function(a,b){
+    return b.flow-a.flow;
+  }).slice(0,3);
+
+  // Find "overheated risk" sectors: big gains but capital outflow
+  var riskCandidates=sectors.filter(function(s){
+    return s.pct>2 && Number.isFinite(s.flow) && s.flow<0;
+  }).sort(function(a,b){
+    return a.flow-b.flow; // most outflow first
+  }).slice(0,3);
+
+  var predictionHtml='';
+  if(rotationCandidates.length>0||reboundCandidates.length>0){
+    predictionHtml='<div class="sectorRotationPredict">'+
+      '<div class="sectorRotationPredictTitle">🔮 下一轮动预测</div>'+
+      '<div class="sectorRotationPredictSub">基于资金流向+涨跌位置分析，以下板块可能成为下一轮资金轮动方向：</div>';
+
+    if(rotationCandidates.length>0){
+      predictionHtml+='<div class="sectorRotationPredictGroup">'+
+        '<div class="sectorRotationPredictLabel">💎 低位吸筹（资金已流入，待启动）</div>';
+      rotationCandidates.forEach(function(s){
+        var w=Math.round(Math.abs(s.pct)/maxAbs*100);
+        predictionHtml+='<div class="sectorRotationPredictItem">'+
+          '<span class="sectorRotationPredictName">'+safeText(s.name)+'</span>'+
+          '<span class="sectorRotationPredictPct">'+(s.pct>0?'+':'')+s.pct.toFixed(2)+'%</span>'+
+          '<span class="sectorRotationPredictFlow red">主力流入'+money(Math.abs(s.flow))+'</span>'+
+          '</div>';
+      });
+      predictionHtml+='</div>';
+    }
+
+    if(reboundCandidates.length>0){
+      predictionHtml+='<div class="sectorRotationPredictGroup">'+
+        '<div class="sectorRotationPredictLabel">🔄 超跌反弹（深跌+资金回流，可能触底）</div>';
+      reboundCandidates.forEach(function(s){
+        predictionHtml+='<div class="sectorRotationPredictItem">'+
+          '<span class="sectorRotationPredictName">'+safeText(s.name)+'</span>'+
+          '<span class="sectorRotationPredictPct green">'+(s.pct>0?'+':'')+s.pct.toFixed(2)+'%</span>'+
+          '<span class="sectorRotationPredictFlow red">主力流入'+money(Math.abs(s.flow))+'</span>'+
+          '</div>';
+      });
+      predictionHtml+='</div>';
+    }
+
+    if(riskCandidates.length>0){
+      predictionHtml+='<div class="sectorRotationPredictGroup">'+
+        '<div class="sectorRotationPredictLabel">⚠️ 诱多风险（涨幅大+资金流出，可能回调）</div>';
+      riskCandidates.forEach(function(s){
+        predictionHtml+='<div class="sectorRotationPredictItem">'+
+          '<span class="sectorRotationPredictName">'+safeText(s.name)+'</span>'+
+          '<span class="sectorRotationPredictPct red">'+(s.pct>0?'+':'')+s.pct.toFixed(2)+'%</span>'+
+          '<span class="sectorRotationPredictFlow green">主力流出'+money(Math.abs(s.flow))+'</span>'+
+          '</div>';
+      });
+      predictionHtml+='</div>';
+    }
+
+    predictionHtml+='</div>';
+  }else{
+    predictionHtml='<div class="sectorRotationPredict">'+
+      '<div class="sectorRotationPredictTitle">🔮 下一轮动预测</div>'+
+      '<div class="sectorRotationPredictSub">暂无明显轮动信号，建议观望等待资金方向明确。</div>'+
+      '</div>';
+  }
+
   var html='<div class="sectorRotationCard">'+
     '<div class="sectorRotationTitle">📊 板块轮动图</div>'+
     '<div class="sectorRotationSub">按涨跌幅排序展示当前板块强弱分布，红色为领涨板块（资金轮动方向），绿色为领跌板块（资金流出方向）。</div>'+
@@ -1097,7 +1192,8 @@ function renderSectorRotation(){
         (topDown.length?topDown.map(function(s){return barHtml(s,false)}).join(''):'<div class="sectorRotationEmpty">暂无下跌板块</div>')+
       '</div>'+
     '</div>'+
-    '<div class="sectorRotationNote">板块轮动图根据实时板块涨跌幅和主力资金流向自动计算，仅作参考，不构成投资建议。</div>'+
+    predictionHtml+
+    '<div class="sectorRotationNote">板块轮动图根据实时板块涨跌幅和主力资金流向自动计算，预测仅基于资金流向+涨跌位置，仅作参考，不构成投资建议。</div>'+
     '</div>';
   panel.innerHTML=html;
 }
@@ -1520,7 +1616,7 @@ var ANNOUNCEMENT={
   sub:'财猫看板 · 维护公告',
   content:'搞钱人！今晚 <b>7:00-8:00</b> 进行系统维护，期间页面可能短暂无法访问。同时上线 <b>信号算法升级</b> —— 新增趋势过滤和主力资金确认，减少假信号，提高胜率！',
   tags:[{cls:'annTagGold',text:'🔧 维护公告'},{cls:'annTagTime',text:'今晚7-8点'}],
-  infoRows:[{lbl:'维护时间',val:'今晚 19:00 - 20:00'},{lbl:'信号升级',val:'新增量价配合+北向资金确认，减少假信号'},{lbl:'版本',val:'v1.5.90'}],
+  infoRows:[{lbl:'维护时间',val:'今晚 19:00 - 20:00'},{lbl:'信号升级',val:'新增量价配合+北向资金确认，减少假信号'},{lbl:'版本',val:'v1.5.91'}],
   content2:'维护期间请提前做好操作安排，维护完成后自动恢复。信号算法升级后，连续上涨/下跌趋势和主力资金流向将参与信号判断，胜率有望提升。',
   note:'信号基于公开行情自动计算，仅作参考，不构成投资建议'
 };
