@@ -125,6 +125,25 @@ body.dark .matrixFormulaNote{background:rgba(168,85,247,.06);border-color:rgba(1
 .sk-progress-bar{height:100%;width:35%;background:var(--gold,#ffd836);border-radius:999px;animation:skProgress 1.8s ease-in-out infinite}
 body.dark .sk-bone,body.dark .sk-card{background:#2a2a2a}
 @keyframes skShimmer{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* === Data Fade In Transition === */
+@keyframes dataFadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.data-fade-in{animation:dataFadeIn .2s ease-out}
+#indices:not(.tabPanelHidden),#boardPage:not(.tabPanelHidden),#flowPage:not(.tabPanelHidden),#techSignalSection:not(.tabPanelHidden){animation:dataFadeIn .2s ease-out}
+
+/* === Signal Card Color Bars === */
+.fundItem{padding-left:14px!important}
+.fundItem.sig-buy::before,.fundItem.sig-sell::before,.fundItem.sig-hold::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:12px 0 0 12px;z-index:2}
+.fundItem.sig-buy::before{background:linear-gradient(180deg,#e53935,#ef5350)}
+.fundItem.sig-sell::before{background:linear-gradient(180deg,#43a047,#66bb6a)}
+.fundItem.sig-hold::before{background:linear-gradient(180deg,#b67800,#e6a817)}
+.fundItem.sig-buy{border-left:4px solid transparent}
+.fundItem.sig-sell{border-left:4px solid transparent}
+.fundItem.sig-hold{border-left:4px solid transparent}
+/* === Card Spacing Unification === */
+.idx,.themeRadarCard,.fundItem,.flowItem,.fundFlowCard,.statusCard,.moodCard{border-radius:12px!important;margin-bottom:8px!important;box-sizing:border-box}
+.fundPanel .fundList{gap:6px}
+.sectionGap{margin-bottom:8px}
 @keyframes skProgress{0%{width:15%}50%{width:65%}100%{width:95%}}
 
 body.dark .loadingShimmer::after{background:linear-gradient(90deg,transparent,rgba(168,85,247,.18),transparent)}
@@ -806,7 +825,7 @@ body.theme-greenup{--red:#079455;--green:#d92d20}
       <div class="settingsGroup">
         <div class="settingsGroupTitle">关于</div>
         <div class="settingsAbout">
-          <div class="settingsAboutItem"><span>版本</span><strong>v1.5.76</strong></div>
+          <div class="settingsAboutItem"><span>版本</span><strong>v1.5.77</strong></div>
           <div class="settingsAboutItem"><span>客服微信</span><strong>19240252146</strong></div>
           <div class="settingsAboutItem"><span>数据来源</span><strong>东方财富 / 新浪财经</strong></div>
           <div class="settingsAboutNote">行情数据来自公开接口，仅供参考，不构成投资建议。</div>
@@ -957,7 +976,106 @@ function addRipple(e){if(reduce)return;const btn=e.currentTarget;if(!btn||btn.di
 
 function bindMotion(root=document){root.querySelectorAll('button,.themeBtn,.fundPanelToggle,.capsuleTabs button,.signalSubTabs button').forEach(b=>{if(!b.dataset.rippleBound){b.dataset.rippleBound='1';b.addEventListener('pointerdown',addRipple,{passive:true})}});root.querySelectorAll('.muted').forEach(x=>{if(/正在|加载|同步|生成/.test(x.textContent||''))x.classList.add('loadingShimmer')})}
 
-async function loadFundFlow(){const tm=$('fundFlowTime');try{const intradayRes=await Promise.allSettled([jsonp('https://push2.eastmoney.com/api/qt/stock/fflow/kline/get?secid=1.000001&secid2=0.399001&lmt=0&klt=1&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61,f62,f63,f64,f65&ut=b2884a393a59ad64002292a3e90d46a5')]);const dailyRes=await Promise.allSettled([jsonp('https://push2his.eastmoney.com/api/qt/stock/fflow/daykline/get?secid=1.000001&lmt=1&klt=101&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61,f62,f63,f64,f65')]);var hasIntraday=intradayRes[0].status==='fulfilled'&&intradayRes[0].value&&intradayRes[0].value.data&&intradayRes[0].value.data.klines.length>0;if(hasIntraday){flowChartData=intradayRes[0].value.data.klines.map(function(k){var p=k.split(',');return{date:p[0],main:Number(p[1]),small:Number(p[2]),medium:Number(p[3]),large:Number(p[4]),super:Number(p[5])}});flowRangeStart=0;flowRangeEnd=flowChartData.length-1;renderFundFlowSummary(flowChartData[flowChartData.length-1]);renderFundFlowChart()}else{if(dailyRes[0].status==='fulfilled'&&dailyRes[0].value&&dailyRes[0].value.data&&dailyRes[0].value.data.klines&&dailyRes[0].value.data.klines.length>0){var p=dailyRes[0].value.data.klines[dailyRes[0].value.data.klines.length-1].split(',');renderFundFlowSummary({main:Number(p[1]),small:Number(p[2]),medium:Number(p[3]),large:Number(p[4]),super:Number(p[5])})}var svg=$('fundFlowChartSvg');if(svg)svg.innerHTML='<text x="170" y="120" text-anchor="middle" fill="var(--muted)" font-size="13">今日暂无分时数据</text><text x="170" y="140" text-anchor="middle" fill="var(--muted)" font-size="11">交易日 09:30-15:00 实时更新</text>';var rl=$('fundFlowRangeLabel');if(rl)rl.textContent='--'}renderFundFlowSectors();if(tm)tm.textContent='更新：'+new Date().toLocaleString('zh-CN')}catch(e){if(tm)tm.innerHTML='<span class="err">资金流数据获取失败，1分钟后自动重试。</span>'}}function updateClock(){const left=Math.max(0,Math.ceil((nextAt-Date.now())/1000));$('countdown').textContent=Math.floor(left/60)+':'+pad(left%60)+'（'+left+'秒）';const d=new Date(nextAt);$('nextTime').textContent='预计刷新：'+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());document.title=left+'秒后刷新 · 财猫看板';marketStatus();if(left<=0)location.reload();if(typeof window._usNightCounter==="undefined")window._usNightCounter=0;window._usNightCounter++;if(window._usNightCounter>=60){window._usNightCounter=0;loadUsNightSession()}}updateClock();setInterval(updateClock,1000);try{initSignalLock()}catch(e){try{console&&console.error&&console.error('initSignalLock fatal:',e)}catch(e2){}}function showSkeletonFor(elId,type){var el=$(elId);if(!el)return;var sk='';if(type==='idx'){sk='<div class="sk-grid"><div class="sk-card"><div class="sk-bone sk-line-sm" style="width:60%"></div><div class="sk-bone sk-line" style="width:80%"></div><div class="sk-bone sk-line-sm" style="width:50%"></div></div><div class="sk-card"><div class="sk-bone sk-line-sm" style="width:60%"></div><div class="sk-bone sk-line" style="width:70%"></div><div class="sk-bone sk-line-sm" style="width:45%"></div></div><div class="sk-card"><div class="sk-bone sk-line-sm" style="width:55%"></div><div class="sk-bone sk-line" style="width:75%"></div><div class="sk-bone sk-line-sm" style="width:50%"></div></div></div>'}else if(type==='flow'){sk='<div class="sk-wrap"><div class="sk-row"><div class="sk-bone sk-circle"></div><div class="sk-bone sk-line" style="flex:1"></div><div class="sk-bone sk-line-sm" style="width:40px"></div></div><div class="sk-row"><div class="sk-bone sk-circle"></div><div class="sk-bone sk-line" style="flex:1"></div><div class="sk-bone sk-line-sm" style="width:40px"></div></div><div class="sk-row"><div class="sk-bone sk-circle"></div><div class="sk-bone sk-line" style="flex:1"></div><div class="sk-bone sk-line-sm" style="width:40px"></div></div></div>'}else if(type==='dist'){sk='<div class="sk-wrap"><div class="sk-row"><div class="sk-bone sk-line-sm" style="width:30px"></div><div class="sk-bone sk-bar" style="flex:1"></div></div><div class="sk-row"><div class="sk-bone sk-line-sm" style="width:30px"></div><div class="sk-bone sk-bar" style="flex:1;width:60%"></div></div><div class="sk-row"><div class="sk-bone sk-line-sm" style="width:30px"></div><div class="sk-bone sk-bar" style="flex:1;width:25%"></div></div></div>'}else{sk='<div class="sk-wrap"><div class="sk-bone sk-line" style="width:50%"></div><div class="sk-bone sk-line-sm" style="width:70%"></div></div>'}el.innerHTML=sk}
+async function loadFundFlow(){const tm=$('fundFlowTime');try{const intradayRes=await Promise.allSettled([jsonp('https://push2.eastmoney.com/api/qt/stock/fflow/kline/get?secid=1.000001&secid2=0.399001&lmt=0&klt=1&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61,f62,f63,f64,f65&ut=b2884a393a59ad64002292a3e90d46a5')]);const dailyRes=await Promise.allSettled([jsonp('https://push2his.eastmoney.com/api/qt/stock/fflow/daykline/get?secid=1.000001&lmt=1&klt=101&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61,f62,f63,f64,f65')]);var hasIntraday=intradayRes[0].status==='fulfilled'&&intradayRes[0].value&&intradayRes[0].value.data&&intradayRes[0].value.data.klines.length>0;if(hasIntraday){flowChartData=intradayRes[0].value.data.klines.map(function(k){var p=k.split(',');return{date:p[0],main:Number(p[1]),small:Number(p[2]),medium:Number(p[3]),large:Number(p[4]),super:Number(p[5])}});flowRangeStart=0;flowRangeEnd=flowChartData.length-1;renderFundFlowSummary(flowChartData[flowChartData.length-1]);renderFundFlowChart()}else{if(dailyRes[0].status==='fulfilled'&&dailyRes[0].value&&dailyRes[0].value.data&&dailyRes[0].value.data.klines&&dailyRes[0].value.data.klines.length>0){var p=dailyRes[0].value.data.klines[dailyRes[0].value.data.klines.length-1].split(',');renderFundFlowSummary({main:Number(p[1]),small:Number(p[2]),medium:Number(p[3]),large:Number(p[4]),super:Number(p[5])})}var svg=$('fundFlowChartSvg');if(svg)svg.innerHTML='<text x="170" y="120" text-anchor="middle" fill="var(--muted)" font-size="13">今日暂无分时数据</text><text x="170" y="140" text-anchor="middle" fill="var(--muted)" font-size="11">交易日 09:30-15:00 实时更新</text>';var rl=$('fundFlowRangeLabel');if(rl)rl.textContent='--'}renderFundFlowSectors();if(tm)tm.textContent='更新：'+new Date().toLocaleString('zh-CN')}catch(e){if(tm)tm.innerHTML='<span class="err">资金流数据获取失败，1分钟后自动重试。</span>'}}function updateClock(){const left=Math.max(0,Math.ceil((nextAt-Date.now())/1000));$('countdown').textContent=Math.floor(left/60)+':'+pad(left%60)+'（'+left+'秒）';const d=new Date(nextAt);$('nextTime').textContent='预计刷新：'+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());document.title=left+'秒后刷新 · 财猫看板';marketStatus();if(left<=0)location.reload();
+
+/* === Long-press Copy === */
+function _initLongPressCopy(){
+  var selectors=[
+    '#vfDeviceCode','.dcCode','#settingsDeviceCode','#settingsSerialCode',
+    '.settingsAboutItem strong:contains("19240252146")',
+    '.settingsAboutItem:has(strong:contains("19240252146"))'
+  ];
+  // Add data-copy attribute to known copyable elements
+  var dcEl=document.getElementById('vfDeviceCode');
+  if(dcEl)dcEl.setAttribute('data-copyable',getDeviceCode());
+  var sdcEl=document.getElementById('settingsDeviceCode');
+  if(sdcEl)sdcEl.setAttribute('data-copyable','1');
+  var scEl=document.getElementById('settingsSerialCode');
+  if(scEl)scEl.setAttribute('data-copyable','1');
+  // Find WeChat elements
+  document.querySelectorAll('.settingsAboutItem').forEach(function(item){
+    var text=item.textContent||'';
+    if(text.indexOf('19240252146')>=0){
+      item.setAttribute('data-copyable','19240252146');
+      item.style.cursor='pointer';
+    }
+  });
+  // Long-press handler
+  var _lpTimer=null,_lpTarget=null;
+  document.addEventListener('touchstart',function(e){
+    var target=e.target.closest('[data-copyable]');
+    if(!target)return;
+    _lpTarget=target;
+    _lpTimer=setTimeout(function(){
+      if(!_lpTarget)return;
+      var val=_lpTarget.getAttribute('data-copyable');
+      if(val==='1'){
+        val=_lpTarget.textContent||'';
+      }
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(val).then(function(){
+          _showCopyToast('已复制: '+val);
+        }).catch(function(){_fallbackCopy(val)});
+      }else{
+        _fallbackCopy(val);
+      }
+      // Haptic feedback
+      if(navigator.vibrate)navigator.vibrate(50);
+    },500);
+  },{passive:true});
+  document.addEventListener('touchmove',function(){
+    if(_lpTimer){clearTimeout(_lpTimer);_lpTimer=null;_lpTarget=null}
+  },{passive:true});
+  document.addEventListener('touchend',function(){
+    if(_lpTimer){clearTimeout(_lpTimer);_lpTimer=null;_lpTarget=null}
+  },{passive:true});
+  // Also support click-to-copy on desktop
+  document.addEventListener('click',function(e){
+    var target=e.target.closest('[data-copyable]');
+    if(!target)return;
+    var val=target.getAttribute('data-copyable');
+    if(val==='1')val=target.textContent||'';
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(val).then(function(){
+        _showCopyToast('已复制: '+val);
+      }).catch(function(){_fallbackCopy(val)});
+    }else{_fallbackCopy(val)}
+  });
+  // Update copyable values dynamically
+  setInterval(function(){
+    var dc=document.getElementById('vfDeviceCode');
+    if(dc&&dc.textContent&&dc.textContent!=='----'){
+      dc.setAttribute('data-copyable',dc.textContent);
+    }
+    var sdc=document.getElementById('settingsDeviceCode');
+    if(sdc&&sdc.textContent&&sdc.textContent!=='----'){
+      sdc.setAttribute('data-copyable',sdc.textContent);
+    }
+    var sc=document.getElementById('settingsSerialCode');
+    if(sc&&sc.textContent&&sc.textContent!=='--'){
+      sc.setAttribute('data-copyable',sc.textContent);
+    }
+  },2000);
+}
+function _fallbackCopy(text){
+  var ta=document.createElement('textarea');
+  ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');_showCopyToast('已复制: '+text)}catch(e){}
+  document.body.removeChild(ta);
+}
+function _showCopyToast(msg){
+  var existing=document.getElementById('_copyToast');
+  if(existing)existing.remove();
+  var toast=document.createElement('div');
+  toast.id='_copyToast';
+  toast.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;z-index:9999;pointer-events:none;animation:dataFadeIn .2s ease';
+  toast.textContent='📋 '+msg;
+  document.body.appendChild(toast);
+  setTimeout(function(){toast.remove()},2000);
+}
+try{_initLongPressCopy()}catch(e){};window._usNightCounter++;if(window._usNightCounter>=60){window._usNightCounter=0;loadUsNightSession()}}updateClock();setInterval(updateClock,1000);try{initSignalLock()}catch(e){try{console&&console.error&&console.error('initSignalLock fatal:',e)}catch(e2){}}function _applyFadeIn(el){if(!el)return;el.classList.remove('data-fade-in');void el.offsetWidth;el.classList.add('data-fade-in')}
+function showSkeletonFor(elId,type){var el=$(elId);if(!el)return;var sk='';if(type==='idx'){sk='<div class="sk-grid"><div class="sk-card"><div class="sk-bone sk-line-sm" style="width:60%"></div><div class="sk-bone sk-line" style="width:80%"></div><div class="sk-bone sk-line-sm" style="width:50%"></div></div><div class="sk-card"><div class="sk-bone sk-line-sm" style="width:60%"></div><div class="sk-bone sk-line" style="width:70%"></div><div class="sk-bone sk-line-sm" style="width:45%"></div></div><div class="sk-card"><div class="sk-bone sk-line-sm" style="width:55%"></div><div class="sk-bone sk-line" style="width:75%"></div><div class="sk-bone sk-line-sm" style="width:50%"></div></div></div>'}else if(type==='flow'){sk='<div class="sk-wrap"><div class="sk-row"><div class="sk-bone sk-circle"></div><div class="sk-bone sk-line" style="flex:1"></div><div class="sk-bone sk-line-sm" style="width:40px"></div></div><div class="sk-row"><div class="sk-bone sk-circle"></div><div class="sk-bone sk-line" style="flex:1"></div><div class="sk-bone sk-line-sm" style="width:40px"></div></div><div class="sk-row"><div class="sk-bone sk-circle"></div><div class="sk-bone sk-line" style="flex:1"></div><div class="sk-bone sk-line-sm" style="width:40px"></div></div></div>'}else if(type==='dist'){sk='<div class="sk-wrap"><div class="sk-row"><div class="sk-bone sk-line-sm" style="width:30px"></div><div class="sk-bone sk-bar" style="flex:1"></div></div><div class="sk-row"><div class="sk-bone sk-line-sm" style="width:30px"></div><div class="sk-bone sk-bar" style="flex:1;width:60%"></div></div><div class="sk-row"><div class="sk-bone sk-line-sm" style="width:30px"></div><div class="sk-bone sk-bar" style="flex:1;width:25%"></div></div></div>'}else{sk='<div class="sk-wrap"><div class="sk-bone sk-line" style="width:50%"></div><div class="sk-bone sk-line-sm" style="width:70%"></div></div>'}el.innerHTML=sk}
 /* Signal Push Notification System */
 function getNotifSettings(){var s={enabled:false,dropThreshold:2,strong:true,flow:true};try{var saved=localStorage.getItem('notifSettings');if(saved){var p=JSON.parse(saved);s.enabled=p.enabled||false;s.dropThreshold=p.dropThreshold||2;s.strong=p.strong!==false;s.flow=p.flow!==false}}catch(e){}return s}
 function saveNotifSettings(s){try{localStorage.setItem('notifSettings',JSON.stringify(s))}catch(e){}}
@@ -972,7 +1090,7 @@ function checkAndNotify(){var s=getNotifSettings();if(!s.enabled)return;var now=
 function resetNotifState(){_lastNotifState={dropAlerted:false,strongAlerted:[],flowAlerted:[]}}
 initTabPanels();showSkeletonFor("idxA","idx");showSkeletonFor("boardFlowList","flow");showSkeletonFor("aStockDistBars","dist");showSkeletonFor("fundTypeDist","dist");showSkeletonFor("conceptFlowList","flow");showSkeletonFor("marketMoodBox","idx");showSkeletonFor("fundSignal","flow");loadIndices();loadBoards();loadFundFlow();setTimeout(renderSignalWinRate,3000);setTimeout(loadUsNightSession,2000);
 async function fetchHistKline(secid,lmt){return new Promise(function(resolve,reject){var cb='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);window[cb]=function(d){delete window[cb];s.remove();resolve(d)};var s=document.createElement('script');s.onerror=function(){delete window[cb];s.remove();reject(Error('K线接口失败'))};s.src='https://push2his.eastmoney.com/api/qt/stock/kline/get?secid='+secid+'&klt=101&fqt=1&end=20500101&lmt='+lmt+'&fields1=f1,f2,f3,f4,f5,f6&fields2=f51,f52,f53,f54,f55,f56,f57,f58&ut=bd1d9ddb04089700cf9c27f6f7426281&_='+Date.now()+'&cb='+cb;document.body.appendChild(s);setTimeout(function(){if(window[cb]){delete window[cb];s.remove();reject(Error('K线接口超时'))}},12000)})}
-var _winRateCache=null,_winRateCacheAt=0;
+var _winRateCache=null,_winRateCacheAt=0;var _wrCollapsed=true;
 var WR_SECTORS=[
 {name:'科技综合',etfs:['399006','000688','512480','159819'],market:['000001','000300']},
 {name:'半导体',etfs:['512480'],market:['000001','000300']},
@@ -1065,7 +1183,7 @@ var lastDetail=s.details[s.details.length-1];var todayMark='';
 if(lastDetail&&lastDetail.correct===null){todayMark=' <span style="color:#2196f3;font-weight:900;font-size:10px">今日:'+lastDetail.signal+'</span>'}
 var detailHtml=s.details.map(function(d){var tc=d.type==='buy'?'var(--red)':d.type==='sell'?'var(--green)':'var(--muted)';var mark=d.correct===null?'<span style="color:#2196f3;font-weight:900">待验证</span>':(d.correct?'<span style="color:#07a35a">✓</span>':'<span style="color:#e53935">✗</span>');return '<span style="display:inline-block;margin:2px 3px;font-size:10px;color:var(--muted)">'+d.date.substring(5)+' <b style="color:'+tc+'">'+d.signal+'</b> '+mark+'</span>'}).join('');
 return '<div style="border:1px solid var(--line);border-radius:10px;margin-bottom:6px;overflow:hidden"><div onclick="var d=this.nextElementSibling;d.style.display=d.style.display===\'none\'?\'block\':\'none\';this.querySelector(\'.wrArrow\').style.transform=d.style.display===\'block\'?\'rotate(180deg)\':\'rotate(0)\'" style="display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;background:var(--soft)"><span style="flex:0 0 68px;font-size:12px;font-weight:800;color:var(--ink)">'+s.name+'</span><div style="flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden"><div style="height:100%;width:'+s.winRate+'%;background:'+sc+';border-radius:4px;transition:width .6s ease"></div></div><span style="flex:0 0 44px;text-align:right;font-size:13px;font-weight:900;color:'+sc+'">'+s.winRate+'%</span><span style="flex:0 0 42px;text-align:right;font-size:10px;color:var(--muted)">'+s.correct+'/'+s.total+'</span><span class="wrArrow" style="flex:0 0 auto;font-size:10px;color:var(--muted);transition:transform .3s;transform:rotate(0)">▼</span></div><div style="display:none;padding:8px 10px;border-top:1px solid var(--line);background:var(--card)">'+detailHtml+todayMark+'</div></div>'}).join('');
-panel.innerHTML='<div style="margin-top:2px"><div style="font-size:13px;font-weight:900;color:var(--ink);margin-bottom:8px">'+(mode==='long'?'中长线':'短线')+'信号本月各板块胜率<span style="margin-left:6px;font-size:11px;color:var(--muted)">'+monthNames[result.month-1]+'</span></div>'+sectorHtml+'</div>'}).catch(function(e){panel.innerHTML='<div class="winRateLoading">胜率计算失败，稍后重试</div>';console.error('胜率计算失败',e)})}
+var _wrCollapsed=typeof _wrCollapsed==='undefined'?true:_wrCollapsed;var _visibleSectors=_wrCollapsed?result.sectors.slice(0,3):result.sectors;var _visibleHtml=_visibleSectors.map(function(s,idx){var sc=s.winRate>=70?'#07a35a':s.winRate>=50?'#b67800':s.winRate>=30?'#e1793f':'#e53935';var lastDetail=s.details[s.details.length-1];var todayMark='';if(lastDetail&&lastDetail.correct===null){todayMark=' <span style="color:#2196f3;font-weight:900;font-size:10px">今日:'+lastDetail.signal+'</span>'}var detailHtml=s.details.map(function(d){var tc=d.type==='buy'?'var(--red)':d.type==='sell'?'var(--green)':'var(--muted)';var mark=d.correct===null?'<span style="color:#2196f3;font-weight:900">待验证</span>':(d.correct?'<span style="color:#07a35a">✓</span>':'<span style="color:#e53935">✗</span>');return '<span style="display:inline-block;margin:2px 3px;font-size:10px;color:var(--muted)">'+d.date.substring(5)+' <b style="color:'+tc+'">'+d.signal+'</b> '+mark+'</span>'}).join('');return '<div style="border:1px solid var(--line);border-radius:10px;margin-bottom:6px;overflow:hidden"><div onclick="var d=this.nextElementSibling;d.style.display=d.style.display===\'none\'?\'block\':\'none\';this.querySelector(\'.wrArrow\').style.transform=d.style.display===\'block\'?\'rotate(180deg)\':\'rotate(0)\'" style="display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;background:var(--soft)"><span style="flex:0 0 68px;font-size:12px;font-weight:800;color:var(--ink)">'+s.name+'</span><div style="flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden"><div style="height:100%;width:'+s.winRate+'%;background:'+sc+';border-radius:4px;transition:width .6s ease"></div></div><span style="flex:0 0 44px;text-align:right;font-size:13px;font-weight:900;color:'+sc+'">'+s.winRate+'%</span><span style="flex:0 0 42px;text-align:right;font-size:10px;color:var(--muted)">'+s.correct+'/'+s.total+'</span><span class="wrArrow" style="flex:0 0 auto;font-size:10px;color:var(--muted);transition:transform .3s;transform:rotate(0)">▼</span></div><div style="display:none;padding:8px 10px;border-top:1px solid var(--line);background:var(--card)">'+detailHtml+todayMark+'</div></div>'}).join('');var _expandBtnHtml='<div style="text-align:center;margin:8px 0 4px"><button type="button" onclick="_wrCollapsed=!_wrCollapsed;renderSignalWinRate()" style="background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:6px 20px;font-size:12px;color:var(--ink);cursor:pointer;font-weight:600">'+(_wrCollapsed?'展开全部 '+result.sectors.length+' 个板块 ▼':'收起 ▲')+'</button></div>';panel.innerHTML='<div style="margin-top:2px"><div style="font-size:13px;font-weight:900;color:var(--ink);margin-bottom:8px">'+(mode==='long'?'中长线':'短线')+'信号本月各板块胜率<span style="margin-left:6px;font-size:11px;color:var(--muted)">'+monthNames[result.month-1]+'</span></div>'+_visibleHtml+_expandBtnHtml+'</div>'}).catch(function(e){panel.innerHTML='<div class="winRateLoading">胜率计算失败，稍后重试</div>';console.error('胜率计算失败',e)})}
 
 function getDeviceCode(){let dc='';try{dc=localStorage.getItem('deviceCode')||''}catch(e){}if(dc)return dc;const ua=navigator.userAgent||'',tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'',scr=screen.width+'x'+screen.height+'x'+(screen.colorDepth||24),lang=navigator.language||'',seed=ua+tz+scr+lang;let h1=0,h2=0;for(let i=0;i<seed.length;i++){h1=((h1<<5)-h1)+seed.charCodeAt(i);h1=h1&h1;h2=((h2<<3)+h2)+seed.charCodeAt(i)*7;h2=h2&h2}const hex1=Math.abs(h1).toString(16).toUpperCase().padStart(8,'0'),hex2=Math.abs(h2).toString(16).toUpperCase().padStart(8,'0');dc=hex1.substring(0,4)+'-'+hex1.substring(4,8)+'-'+hex2.substring(0,4);try{localStorage.setItem('deviceCode',dc)}catch(e){}return dc}var vfTier='monthly',vfStep=0;var vipUnlocked=vipUnlocked||false;function openVipFlow(){const m=$('vipFlowModal');if(!m)return;m.classList.add('show');m.setAttribute('aria-hidden','false');m.classList.toggle('closable',vipUnlocked);vfStep=0;showVfStep(0);setTimeout(function(){var c=$('vfPreviewCarousel');if(c){c.scrollLeft=0;c.onscroll=function(){var idx=Math.round(c.scrollLeft/c.clientWidth);var dots=$('vfPreviewDots');if(dots){dots.querySelectorAll('span').forEach(function(s,i){s.classList.toggle('active',i===idx)})}}}},100)}function closeVipFlow(e,force){if(e&&e.target&&e.target.id!=='vipFlowModal')return;if(!force&&!vipUnlocked)return;const m=$('vipFlowModal');if(!m)return;m.classList.remove('show');m.setAttribute('aria-hidden','true')}function startVipFlow(tier){vfTier=tier||'monthly';vfStep=1;showVfStep(1);const dcEl=$('vfDeviceCode');if(dcEl)dcEl.textContent=getDeviceCode();const amtEl=$('vfPayAmt');if(amtEl){const amt=tier==='permanent'?'48':'9.9';amtEl.innerHTML='<span class="c">¥</span><span class="a">'+amt+'</span>'}}function showVfStep(step){['vfCompareView','vfStep1','vfStep2','vfStep3'].forEach(function(id,i){const el=$(id);if(el){if(i===step)el.classList.add('show');else el.classList.remove('show')}});vfStep=step}function nextVfStep(){if(vfStep<3){vfStep++;showVfStep(vfStep);if(vfStep===1){const dcEl=$('vfDeviceCode');if(dcEl)dcEl.textContent=getDeviceCode()}}}function prevVfStep(){if(vfStep>0){vfStep--;showVfStep(vfStep)}}function copyDeviceCode(){const dc=getDeviceCode();if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(dc).then(function(){showVfToast('设备码已复制：'+dc)}).catch(function(){fallbackCopy(dc)})}else{fallbackCopy(dc)}}function fallbackCopy(text){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');showVfToast('设备码已复制：'+text)}catch(e){showVfToast('复制失败，请手动复制：'+text)}document.body.removeChild(ta)}function showVfToast(msg){const el=$('vfSerMsg');if(el){el.textContent=msg;el.className='serMsg success show';setTimeout(function(){if(el.textContent===msg)el.classList.remove('show')},3000)}}function submitVfSerial(){const input=$('vfSerialInput'),msg=$('vfSerMsg');const raw=(input&&input.value||'').trim();const code=normSerial(raw);if(!code){if(msg){msg.textContent='请输入序列号';msg.className='serMsg error show'}return}const item=SERIAL_TABLE.find(function(x){return normSerial(x.code)===code});if(!item){if(msg){msg.textContent='序列号不可用';msg.className='serMsg error show'}if(input)input.select();return}if(item.status&&/作废|禁用|停用/.test(item.status)){if(msg){msg.textContent='序列号不可用';msg.className='serMsg error show'}return}if(item.deviceCode&&item.deviceCode!==getDeviceCode()){if(msg){msg.textContent='该序列号仅限指定设备使用';msg.className='serMsg error show'}return}let rec=getSerialRecord(item.code);if(rec.expiresAt&&Number(rec.expiresAt)<=Date.now()){if(msg){msg.textContent='序列号不可用';msg.className='serMsg error show'}return}if(rec.activatedAt&&rec.deviceCode&&rec.deviceCode!==getDeviceCode()){if(msg){msg.textContent='该序列号已绑定其他设备，请使用本机设备码获取专属序列号';msg.className='serMsg error show'}return}if(!rec.activatedAt){const now=Date.now();rec={code:item.code,status:item.status,days:item.days,activatedAt:now,expiresAt:now+Number(item.days||30)*DAY_MS,deviceCode:getDeviceCode()};saveSerialRecord(rec)}if(msg){msg.textContent='✓ VIP激活成功！';msg.className='serMsg success show'}setTimeout(function(){unlockPanels(rec,false);const lock=$('signalLock');if(lock)lock.style.display='none';const sigInput=$('signalCode');if(sigInput)sigInput.value=item.code},1500)}
 </script><script>;(function(){try{var saved=localStorage.getItem('signalMode')||'short';window.signalMode=saved;setTimeout(function(){if(typeof renderTechSignal==='function')renderTechSignal()},2000);var btn=document.getElementById(saved==='long'?'modeLong':'modeShort');if(btn){btn.classList.add('active');btn.style.background='var(--blue)';btn.style.color='#141100';var other=document.getElementById(saved==='long'?'modeShort':'modeLong');if(other){other.classList.remove('active');other.style.background='transparent';other.style.color='var(--muted)'}}}catch(e){}})();document.addEventListener('click',function(e){var opt=e.target.closest('.posOpt');if(!opt)return;var card=opt.closest('.fundItem');if(!card)return;e.stopPropagation();setCardPosition(opt.dataset.pos,card)});</script><script>window.setSignalMode=setSignalMode;window.renderTechSignal=renderTechSignal;window.chooseSignal=chooseSignal;window.fundClass=fundClass;window.setSignalSubTab=setSignalSubTab;window.renderSignalWinRate=renderSignalWinRate;window.setCardPosition=setCardPosition</script><button class="checkinFloat" type="button" onclick="openCheckinModal()" aria-label="每日签到" title="每日签到"><span class="checkinTooltip">每日签到</span><img src="checkin-icon.png" alt="签到" class="checkinIconImg"></button>
@@ -1078,14 +1196,14 @@ function getDeviceCode(){let dc='';try{dc=localStorage.getItem('deviceCode')||''
 <div id="annModal" class="annModal" onclick="closeAnnModal(event)" aria-hidden="true"><div class="annCard" onclick="event.stopPropagation()"><div class="annHeader"><button class="annClose" type="button" onclick="closeAnnModal()" aria-label="关闭">×</button><div class="annIconWrap"><span id="annIcon">📢</span></div><h3 id="annTitle">系统升级公告</h3><div class="annSub" id="annSub">财猫看板 · 更新通知</div></div><div class="annBody"><div class="annMeta" id="annMeta"></div><p id="annContent"></p><div class="annInfoBox" id="annInfoBox"></div><p id="annContent2"></p><div class="annNote" id="annNote"></div></div><div class="annFooter"><label class="annCheckLabel" onclick="toggleAnnCheck()"><span class="annCheckBox" id="annCheckBox"></span>今日不再显示</label><button class="annBtnKnow" type="button" onclick="closeAnnModal()">我知道了</button></div></div></div>
 <script>
 var ANNOUNCEMENT={
-  id:'20260805-skeleton004',
-  icon:'✨',
-  title:'骨架屏加载 + 信号推送提醒上线',
-  sub:'财猫看板 · 功能更新',
-  content:'各位搞钱人！两大新功能上线：<b>骨架屏加载态</b>（数据加载时显示闪烁占位动画，告别空白等待）+ <b>信号推送提醒</b>（大跌预警、强势主线、资金异动自动推送浏览器通知，不用盯盘）。',
-  tags:[{cls:'annTagGold',text:'✨ 功能更新'},{cls:'annTagTime',text:'✅ 已上线'}],
-  infoRows:[{lbl:'新增功能',val:'骨架屏加载态 + 信号推送提醒'},{lbl:'骨架屏',val:'数据加载时显示闪烁占位动画，加载完成后自动替换'},{lbl:'信号推送',val:'在设置中开启通知，支持大跌预警/强势主线/资金异动'},{lbl:'版本',val:'v1.5.76'}],
-  content2:'打开设置 → 信号推送提醒 → 开启通知，即可接收关键信号推送。支持自定义大跌预警阈值、开关各类提醒。骨架屏在页面加载时自动生效，无需设置。',
+  id:'20260805-ui007',
+  icon:'🎨',
+title:'五大体验优化上线',
+  sub:'财猫看板 · 体验升级',
+  content:'各位搞钱人！五大优化一次性上线：<b>卡片间距统一</b>（视觉更整洁）+ <b>数据淡入过渡</b>（骨架屏到数据丝滑切换）+ <b>信号色条</b>（红绿黄一眼区分信号方向）+ <b>胜率面板折叠</b>（默认显示前3个板块）+ <b>长按复制</b>（序列号/设备码/微信长按即复制）。',
+  tags:[{cls:'annTagGold',text:'🎨 体验升级'},{cls:'annTagTime',text:'✅ 已上线'}],
+  infoRows:[{lbl:'卡片间距',val:'指数/板块/信号卡片统一圆角和间距'},{lbl:'信号色条',val:'左侧红/绿/黄色条区分买入/卖出/持有'},{lbl:'胜率折叠',val:'默认显示前3个板块，点击展开全部'},{lbl:'长按复制',val:'序列号、设备码、客服微信长按一键复制'},{lbl:'版本',val:'v1.5.77'}],
+  content2:'信号色条：每张板块信号卡片左侧有红（买入）、绿（卖出）、黄（持有）色条，一眼扫过去就知道哪些板块值得关注。长按复制：序列号、设备码、客服微信长按即可一键复制。',
   note:'信号基于公开行情自动计算，仅作参考，不构成投资建议'
 };
 var _annChecked=false;
