@@ -906,7 +906,7 @@ body.theme-greenup{--red:#079455;--green:#d92d20}
       <div class="settingsGroup">
         <div class="settingsGroupTitle">关于</div>
         <div class="settingsAbout">
-          <div class="settingsAboutItem"><span>版本</span><strong>v1.5.92</strong></div>
+          <div class="settingsAboutItem"><span>版本</span><strong>v1.5.93</strong></div>
           <div class="settingsAboutItem"><span>客服微信</span><strong>19240252146</strong></div>
           <div class="settingsAboutItem"><span>数据来源</span><strong>东方财富 / 新浪财经</strong></div>
           <div class="settingsAboutNote">行情数据来自公开接口，仅供参考，不构成投资建议。</div>
@@ -1056,10 +1056,17 @@ function renderSectorRotation(){
   }
   var sectors=[];
   var seen={};
+  // Build flow map from boardFlowData (which has f62 field)
+  var flowMap={};
+  (boardFlowData||[]).forEach(function(b){
+    var name=b.f14||'';
+    var flow=Number(b.f62||0);
+    if(name&&Number.isFinite(flow))flowMap[name]=flow;
+  });
   boards.forEach(function(b){
     var name=b.f14||'';
     var pct=Number(b.f3);
-    var flow=Number(b.f62||0);
+    var flow=flowMap[name]||0;
     if(!Number.isFinite(pct)||!name)return;
     if(seen[name])return;
     seen[name]=1;
@@ -1616,7 +1623,7 @@ var ANNOUNCEMENT={
   sub:'财猫看板 · 维护公告',
   content:'搞钱人！今晚 <b>7:00-8:00</b> 进行系统维护，期间页面可能短暂无法访问。同时上线 <b>信号算法升级</b> —— 新增趋势过滤和主力资金确认，减少假信号，提高胜率！',
   tags:[{cls:'annTagGold',text:'🔧 维护公告'},{cls:'annTagTime',text:'今晚7-8点'}],
-  infoRows:[{lbl:'维护时间',val:'今晚 19:00 - 20:00'},{lbl:'信号升级',val:'新增量价配合+北向资金确认，减少假信号'},{lbl:'版本',val:'v1.5.92'}],
+  infoRows:[{lbl:'维护时间',val:'今晚 19:00 - 20:00'},{lbl:'信号升级',val:'新增量价配合+北向资金确认，减少假信号'},{lbl:'版本',val:'v1.5.93'}],
   content2:'维护期间请提前做好操作安排，维护完成后自动恢复。信号算法升级后，连续上涨/下跌趋势和主力资金流向将参与信号判断，胜率有望提升。',
   note:'信号基于公开行情自动计算，仅作参考，不构成投资建议'
 };
