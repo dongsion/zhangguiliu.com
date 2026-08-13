@@ -1480,6 +1480,7 @@ var nbBoost=0;
 if(nbFlow>500000000)nbBoost=0.5;
 else if(nbFlow<-500000000)nbBoost=-0.5;
 adjPct=adjPct+volBoost+nbBoost;
+var marketRegime='neutral';if(Number.isFinite(marketAvg)){if(marketAvg>1.0)marketRegime='bull';else if(marketAvg<-1.0)marketRegime='bear';}
 if(adjPct>=8)return{signal:mode==='long'?'阶段止盈':'逃顶',type:'sell'};
 if(adjPct>=4){
 if(consecUp>=3&&flowDown)return{signal:mode==='long'?'分批止盈':'止盈减仓',type:'sell'};
@@ -1494,9 +1495,13 @@ if(adjPct>=3){
 if(consecDown>=2&&flowUp){return{signal:mode==='long'?'逢低布局':'低吸加仓',type:'buy'}}
 return{signal:'避免追高',type:'neutral'};
 }
+if(adjPct>=1&&consecUp>=4&&!flowUp){return{signal:'避免追高',type:'neutral'}}
+if(adjPct>=1.5&&relative>=0.3){if(flowUp||volRatio>1.2){return{signal:mode==='long'?'逢低布局':'机会',type:'buy'}}if(marketRegime==='bear'){return{signal:'观望',type:'neutral'}}return{signal:mode==='long'?'持有观察':'持有',type:'neutral'};}
 if(adjPct>=1&&relative>=0){
 if(consecUp>=3&&flowDown){return{signal:'避免追高',type:'neutral'}}
-return{signal:mode==='long'?'逢低布局':'机会',type:'buy'};
+if(marketRegime==='bear'&&!flowUp){return{signal:'观望',type:'neutral'}}
+if(flowUp||volRatio>1.1){return{signal:mode==='long'?'逢低布局':'机会',type:'buy'}}
+return{signal:mode==='long'?'持有观察':'持有',type:'neutral'};
 }
 if(adjPct>=0)return{signal:mode==='long'?'持有观察':'持有',type:'neutral'};
 if(adjPct<=-6){
@@ -1507,6 +1512,7 @@ return{signal:'超跌',type:'neutral'};
 if(adjPct<=-3){
 if(mode==='long'){return{signal:'长线持有',type:'neutral'}}
 if(consecDown>=3&&flowUp){return{signal:'低位吸筹',type:'buy'}}
+if(marketRegime==='bull'&&relative>0){return{signal:'观望',type:'neutral'}}
 return{signal:'止损减仓',type:'sell'};
 }
 if(relative>0){
