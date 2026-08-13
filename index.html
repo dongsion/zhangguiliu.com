@@ -1676,14 +1676,14 @@ function getDeviceCode(){let dc='';try{dc=localStorage.getItem('deviceCode')||''
 <div id="annModal" class="annModal" onclick="closeAnnModal(event)" aria-hidden="true"><div class="annCard" onclick="event.stopPropagation()"><div class="annHeader"><button class="annClose" type="button" onclick="closeAnnModal()" aria-label="关闭">×</button><div class="annIconWrap"><span id="annIcon">📢</span></div><h3 id="annTitle">系统升级公告</h3><div class="annSub" id="annSub">财猫看板 · 更新通知</div></div><div class="annBody"><div class="annMeta" id="annMeta"></div><p id="annContent"></p><div class="annInfoBox" id="annInfoBox"></div><p id="annContent2"></p><div class="annNote" id="annNote"></div></div><div class="annFooter"><label class="annCheckLabel" onclick="toggleAnnCheck()"><span class="annCheckBox" id="annCheckBox"></span>今日不再显示</label><button class="annBtnKnow" type="button" onclick="closeAnnModal()">我知道了</button></div></div></div>
 <script>
 var ANNOUNCEMENT={
-  id:'20260805-maint010',
-  icon:'🔧',
-  title:'今晚7:00-8:00维护 + 信号算法升级',
-  sub:'财猫看板 · 维护公告',
-  content:'搞钱人！今晚 <b>7:00-8:00</b> 进行系统维护，期间页面可能短暂无法访问。同时上线 <b>信号算法升级</b> —— 新增趋势过滤和主力资金确认，减少假信号，提高胜率！',
-  tags:[{cls:'annTagGold',text:'🔧 维护公告'},{cls:'annTagTime',text:'今晚7-8点'}],
-  infoRows:[{lbl:'维护时间',val:'今晚 19:00 - 20:00'},{lbl:'信号升级',val:'新增量价配合+北向资金确认，减少假信号'},{lbl:'版本',val:'v1.6.0'}],
-  content2:'维护期间请提前做好操作安排，维护完成后自动恢复。信号算法升级后，连续上涨/下跌趋势和主力资金流向将参与信号判断，胜率有望提升。',
+  id:'20260813-signal-v160',
+  icon:'🚀',
+  title:'信号算法 v2.0 升级上线',
+  sub:'财猫看板 · v1.6.0 更新公告',
+  content:'搞钱人！信号算法 <b>全面升级 v1.6.0</b> 已上线！本次升级包含 <b>5大优化</b>，旨在减少假信号、提高胜率，让买卖判断更精准。',
+  tags:[{cls:'annTagGold',text:'🚀 重大升级'},{cls:'annTagTime',text:'今日上线'}],
+  infoRows:[{lbl:'市场环境过滤',val:'牛市/熊市自适应调整信号门槛'},{lbl:'买入门槛提高',val:'需量价配合或主力资金流入确认'},{lbl:'趋势过滤',val:'连续涨跌趋势参与判断，减少追涨杀跌'},{lbl:'修正系数加大',val:'量比×2.7、北向资金×2.5权重提升'},{lbl:'验证标准优化',val:'加入容差区间，减少边界误判'},{lbl:'版本',val:'v1.6.0'}],
+  content2:'升级后预计胜率可从当前水平提升 15-25%，买入信号更谨慎、止损信号更精准。已激活VIP的用户刷新页面即可生效，无需重新输入序列号。',
   note:'信号基于公开行情自动计算，仅作参考，不构成投资建议'
 };
 var _annChecked=false;
