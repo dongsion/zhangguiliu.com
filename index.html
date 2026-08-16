@@ -970,7 +970,7 @@ body.theme-greenup{--red:#079455;--green:#d92d20}
       <div class="settingsGroup">
         <div class="settingsGroupTitle">关于</div>
         <div class="settingsAbout">
-          <div class="settingsAboutItem"><span>版本</span><strong>v1.6.0</strong></div>
+          <div class="settingsAboutItem"><span>版本</span><strong>v1.6.1</strong></div>
           <div class="settingsAboutItem"><span>客服微信</span><strong>19240252146</strong></div>
           <div class="settingsAboutItem"><span>数据来源</span><strong>东方财富 / 新浪财经</strong></div>
           <div class="settingsAboutNote">行情数据来自公开接口，仅供参考，不构成投资建议。</div>
@@ -1765,15 +1765,15 @@ function getDeviceCode(){let dc='';try{dc=localStorage.getItem('deviceCode')||''
 <div id="annModal" class="annModal" onclick="closeAnnModal(event)" aria-hidden="true"><div class="annCard" onclick="event.stopPropagation()"><div class="annHeader"><button class="annClose" type="button" onclick="closeAnnModal()" aria-label="关闭">×</button><div class="annIconWrap"><span id="annIcon">📢</span></div><h3 id="annTitle">系统升级公告</h3><div class="annSub" id="annSub">财猫看板 · 更新通知</div></div><div class="annBody"><div class="annMeta" id="annMeta"></div><p id="annContent"></p><div class="annInfoBox" id="annInfoBox"></div><p id="annContent2"></p><div class="annNote" id="annNote"></div></div><div class="annFooter"><label class="annCheckLabel" onclick="toggleAnnCheck()"><span class="annCheckBox" id="annCheckBox"></span>今日不再显示</label><button class="annBtnKnow" type="button" onclick="closeAnnModal()">我知道了</button></div></div></div>
 <script>
 var ANNOUNCEMENT={
-  id:'20260813-signal-v160',
-  icon:'🚀',
-  title:'信号算法 v2.0 升级上线',
-  sub:'财猫看板 · v1.6.0 更新公告',
-  content:'搞钱人！信号算法 <b>全面升级 v1.6.0</b> 已上线！本次升级包含 <b>5大优化</b>，旨在减少假信号、提高胜率，让买卖判断更精准。',
-  tags:[{cls:'annTagGold',text:'🚀 重大升级'},{cls:'annTagTime',text:'今日上线'}],
-  infoRows:[{lbl:'市场环境过滤',val:'牛市/熊市自适应调整信号门槛'},{lbl:'买入门槛提高',val:'需量价配合或主力资金流入确认'},{lbl:'趋势过滤',val:'连续涨跌趋势参与判断，减少追涨杀跌'},{lbl:'修正系数加大',val:'量比×2.7、北向资金×2.5权重提升'},{lbl:'验证标准优化',val:'加入容差区间，减少边界误判'},{lbl:'版本',val:'v1.6.0'}],
-  content2:'升级后预计胜率可从当前水平提升 15-25%，买入信号更谨慎、止损信号更精准。已激活VIP的用户刷新页面即可生效，无需重新输入序列号。',
-  note:'信号基于公开行情自动计算，仅作参考，不构成投资建议'
+  id:'20260816-flow-summary-v161',
+  icon:'📊',
+  title:'资金流页面新增「今日行情总结」',
+  sub:'财猫看板 · v1.6.1 更新公告',
+  content:'搞钱人！<b>资金流Tab</b> 顶部新增 <b>「今日行情总结」</b> 卡片，自动分析大盘走势、板块轮动、资金动向，一眼掌握市场核心信号。',
+  tags:[{cls:'annTagGold',text:'✨ 新功能'},{cls:'annTagTime',text:'今日上线'}],
+  infoRows:[{lbl:'情绪标签',val:'根据大盘涨跌+资金流向自动判断偏强/偏弱/中性'},{lbl:'资金动向',val:'主力净流入/流出TOP3板块一目了然'},{lbl:'关键信号',val:'价格×资金四象限判断：强势主线/诱多风险/低位吸筹/抛压未完'},{lbl:'位置',val:'资金流Tab顶部，VIP解锁后自动显示'},{lbl:'版本',val:'v1.6.1'}],
+  content2:'已激活VIP的用户刷新页面即可看到，无需重新输入序列号。卡片随行情刷新自动更新，也可点击「重新生成」手动刷新。',
+  note:'总结基于公开行情数据自动生成，仅作参考，不构成投资建议'
 };
 var _annChecked=false;
 function getAnnDismissKey(){return 'annDismiss_'+(ANNOUNCEMENT.id||'')}
