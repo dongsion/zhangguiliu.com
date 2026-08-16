@@ -683,6 +683,10 @@ body.theme-greenup{--red:#079455;--green:#d92d20}
 .aiSummaryFormulaItem{font-size:11px;color:var(--muted);padding:6px 4px;background:var(--card);border-radius:6px;text-align:center;border:1px solid var(--line)}
 .aiSummaryRetryBtn{margin-top:8px;padding:6px 14px;border:1px solid var(--blue);border-radius:8px;background:transparent;color:var(--blue);font-size:12px;font-weight:600;cursor:pointer}
 .aiSummaryRetryBtn:hover{background:var(--soft)}
+
+.aiSummaryProvider{font-size:10px;color:var(--muted);margin-top:6px;text-align:right}
+.aiSummaryProvider .tag{display:inline-block;padding:2px 8px;border-radius:4px;background:var(--soft);border:1px solid var(--line)}
+
 </style></head><body>
 
 
@@ -1047,6 +1051,7 @@ async function fetchAISummary(){
     _aiSummaryLoading=false;
   }
 }
+var AI_PROVIDER_LABELS={'qwen':'通义千问','doubao':'豆包','deepseek':'DeepSeek','cf-ai':'CF AI','local':'本地规则'};
 function renderAISummary(data){
   var body=document.getElementById('aiSummaryBody');
   var badge=document.getElementById('aiSummaryBadge');
@@ -1071,6 +1076,8 @@ function renderAISummary(data){
     html+='</div>';
   }
   if(!html)html='<p>暂无分析结果</p>';
+  if(data.provider){var pLabel=AI_PROVIDER_LABELS[data.provider]||data.provider;html+='<div class="aiSummaryProvider"><span class="tag">由 '+pLabel+' 生成</span></div>'}
+  html+='<div class="aiSummaryProvider"><span class="tag">本地规则总结</span></div>';
   html+='<button class="aiSummaryRetryBtn" onclick="fetchAISummary()">🔄 重新生成</button>';
   body.innerHTML=html;
 }
