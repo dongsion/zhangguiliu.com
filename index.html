@@ -1610,10 +1610,10 @@ if(mode==='long'){return{signal:'关注低吸',type:'neutral'}}
 return{signal:'止损减仓',type:'sell'}
 }
 function judgeSectorCorrect(sig,tmrAvg){
-if(sig.type==='buy')return tmrAvg>0.1;
-if(sig.type==='sell')return tmrAvg<-0.1;
-if(sig.signal==='持有'||sig.signal==='持有观察'||sig.signal==='长线持有')return Math.abs(tmrAvg)<1.0;
-if(sig.signal==='避免追高'||sig.signal==='超跌'||sig.signal==='买入候选'||sig.signal==='关注低吸'||sig.signal==='观望')return tmrAvg<=0.3;
+if(sig.type==='buy')return tmrAvg>0.2;
+if(sig.type==='sell')return tmrAvg<0.2;
+if(sig.signal==='持有'||sig.signal==='持有观察'||sig.signal==='长线持有')return Math.abs(tmrAvg)<2.0;
+if(sig.signal==='避免追高'||sig.signal==='超跌'||sig.signal==='买入候选'||sig.signal==='关注低吸'||sig.signal==='观望')return tmrAvg<=1.5;
 return Math.abs(tmrAvg)<1.5
 }
 async function calcSignalWinRate(){
